@@ -7,6 +7,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Mail, Lock, ArrowLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 type Mode = "login" | "signup" | "magic-link";
 
@@ -64,12 +68,6 @@ export default function ConnexionPage() {
     setLoading(false);
   };
 
-  const inputClass =
-    "w-full pl-10 pr-4 py-2.5 rounded-lg border border-primary/20 bg-surface focus:border-primary text-base outline-none transition-colors duration-200";
-
-  const primaryBtn =
-    "w-full bg-primary text-white py-2.5 rounded-lg font-semibold hover:bg-primary/90 transition-colors duration-200 disabled:opacity-50 cursor-pointer";
-
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
       <div className="w-full max-w-md">
@@ -122,49 +120,57 @@ export default function ConnexionPage() {
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Email */}
-            <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
-              <input
-                type="email"
-                placeholder="ton@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className={inputClass}
-              />
+            <div className="space-y-1">
+              <Label htmlFor="email">Email</Label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted pointer-events-none" />
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="ton@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="pl-10"
+                />
+              </div>
             </div>
 
             {/* Password (not in magic-link mode) */}
             {mode !== "magic-link" && (
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
-                <input
-                  type="password"
-                  placeholder="Mot de passe"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  minLength={6}
-                  className={inputClass}
-                />
+              <div className="space-y-1">
+                <Label htmlFor="password">Mot de passe</Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted pointer-events-none" />
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="Mot de passe"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    minLength={6}
+                    className="pl-10"
+                  />
+                </div>
               </div>
             )}
 
             {/* Error */}
             {error && (
-              <p className="text-red-500 text-sm bg-red-50 px-3 py-2 rounded-lg">
-                {error}
-              </p>
+              <Alert variant="destructive">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
             )}
 
             {/* Success */}
             {success && (
-              <p className="text-green-600 text-sm bg-green-50 px-3 py-2 rounded-lg">
-                {success}
-              </p>
+              <Alert>
+                <AlertDescription>{success}</AlertDescription>
+              </Alert>
             )}
 
-            <button type="submit" disabled={loading} className={primaryBtn}>
+            <Button type="submit" disabled={loading} className="w-full">
               {loading
                 ? "Chargement..."
                 : mode === "login"
@@ -172,14 +178,14 @@ export default function ConnexionPage() {
                 : mode === "signup"
                 ? "Créer mon compte"
                 : "Envoyer le lien"}
-            </button>
+            </Button>
           </form>
 
           {/* Back to home */}
           <div className="mt-6 text-center">
             <Link
               href="/"
-              className="inline-flex items-center gap-1.5 text-sm text-text-muted hover:text-primary transition-colors duration-200"
+              className={buttonVariants({ variant: "link" })}
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               Retour à l&apos;accueil
