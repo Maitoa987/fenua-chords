@@ -2,6 +2,15 @@
 
 import type { Style, Instrument } from "@/types/database"
 import { ArtistAutocomplete, type ArtistValue } from "@/components/ArtistAutocomplete"
+import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/input"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 export interface SongFormData {
   title: string
@@ -40,6 +49,14 @@ const KEYS = [
   "F#m", "Gbm", "Gm", "G#m", "Abm", "Am", "A#m", "Bbm", "Bm",
 ]
 
+const STYLE_LABEL: Record<Style, string> = Object.fromEntries(
+  STYLES.map((s) => [s.value, s.label])
+) as Record<Style, string>
+
+const INSTRUMENT_LABEL: Record<Instrument, string> = Object.fromEntries(
+  INSTRUMENTS.map((i) => [i.value, i.label])
+) as Record<Instrument, string>
+
 export function SongForm({ data, onChange }: SongFormProps) {
   function update<K extends keyof SongFormData>(key: K, value: SongFormData[K]) {
     onChange({ ...data, [key]: value })
@@ -48,20 +65,19 @@ export function SongForm({ data, onChange }: SongFormProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       {/* Title — span 2 */}
-      <div className="sm:col-span-2">
-        <label className="block text-sm font-medium mb-1">Titre *</label>
-        <input
+      <div className="sm:col-span-2 space-y-1">
+        <Label>Titre *</Label>
+        <Input
           type="text"
           value={data.title}
           onChange={(e) => update("title", e.target.value)}
           placeholder="Titre de la chanson"
-          className="w-full border border-border rounded-lg px-3 py-2 bg-background focus:outline-none focus:ring-2 focus:ring-primary"
         />
       </div>
 
       {/* Artist — span 2 */}
-      <div className="sm:col-span-2">
-        <label className="block text-sm font-medium mb-1">Artiste *</label>
+      <div className="sm:col-span-2 space-y-1">
+        <Label>Artiste *</Label>
         <ArtistAutocomplete
           value={data.artist}
           onChange={(v) => onChange({ ...data, artist: v })}
@@ -72,71 +88,96 @@ export function SongForm({ data, onChange }: SongFormProps) {
       </div>
 
       {/* Style */}
-      <div>
-        <label className="block text-sm font-medium mb-1">Style</label>
-        <select
+      <div className="space-y-1">
+        <Label>Style</Label>
+        <Select
           value={data.style}
-          onChange={(e) => update("style", e.target.value as Style)}
-          className="w-full border border-border rounded-lg px-3 py-2 bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+          onValueChange={(v) => update("style", v as Style)}
         >
-          {STYLES.map((s) => (
-            <option key={s.value} value={s.value}>{s.label}</option>
-          ))}
-        </select>
+          <SelectTrigger className="w-full">
+            <SelectValue>
+              {(v: Style | null) => v ? STYLE_LABEL[v] : "Sélectionner..."}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent>
+            {STYLES.map((s) => (
+              <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Instrument */}
-      <div>
-        <label className="block text-sm font-medium mb-1">Instrument</label>
-        <select
+      <div className="space-y-1">
+        <Label>Instrument</Label>
+        <Select
           value={data.instrument}
-          onChange={(e) => update("instrument", e.target.value as Instrument)}
-          className="w-full border border-border rounded-lg px-3 py-2 bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+          onValueChange={(v) => update("instrument", v as Instrument)}
         >
-          {INSTRUMENTS.map((i) => (
-            <option key={i.value} value={i.value}>{i.label}</option>
-          ))}
-        </select>
+          <SelectTrigger className="w-full">
+            <SelectValue>
+              {(v: Instrument | null) => v ? INSTRUMENT_LABEL[v] : "Sélectionner..."}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent>
+            {INSTRUMENTS.map((i) => (
+              <SelectItem key={i.value} value={i.value}>{i.label}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Original Key */}
-      <div>
-        <label className="block text-sm font-medium mb-1">Tonalité</label>
-        <select
-          value={data.originalKey}
-          onChange={(e) => update("originalKey", e.target.value)}
-          className="w-full border border-border rounded-lg px-3 py-2 bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+      <div className="space-y-1">
+        <Label>Tonalité</Label>
+        <Select
+          value={data.originalKey || null}
+          onValueChange={(v) => update("originalKey", v ?? "")}
         >
-          <option value="">Non spécifiée</option>
-          {KEYS.map((k) => (
-            <option key={k} value={k}>{k}</option>
-          ))}
-        </select>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Non spécifiée" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value={null as unknown as string}>Non spécifiée</SelectItem>
+            {KEYS.map((k) => (
+              <SelectItem key={k} value={k}>{k}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Capo */}
-      <div>
-        <label className="block text-sm font-medium mb-1">Capo</label>
-        <select
-          value={data.capo}
-          onChange={(e) => update("capo", parseInt(e.target.value))}
-          className="w-full border border-border rounded-lg px-3 py-2 bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+      <div className="space-y-1">
+        <Label>Capo</Label>
+        <Select
+          value={String(data.capo)}
+          onValueChange={(v) => update("capo", parseInt(v ?? "0"))}
         >
-          {Array.from({ length: 13 }, (_, i) => (
-            <option key={i} value={i}>{i === 0 ? "Sans capo" : `Capo ${i}`}</option>
-          ))}
-        </select>
+          <SelectTrigger className="w-full">
+            <SelectValue>
+              {(v: string | null) =>
+                v === null ? "Sans capo" : parseInt(v) === 0 ? "Sans capo" : `Capo ${v}`
+              }
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent>
+            {Array.from({ length: 13 }, (_, i) => (
+              <SelectItem key={i} value={String(i)}>
+                {i === 0 ? "Sans capo" : `Capo ${i}`}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Tuning — span 2 */}
-      <div className="sm:col-span-2">
-        <label className="block text-sm font-medium mb-1">Accordage</label>
-        <input
+      <div className="sm:col-span-2 space-y-1">
+        <Label>Accordage</Label>
+        <Input
           type="text"
           value={data.tuning}
           onChange={(e) => update("tuning", e.target.value)}
           placeholder="ex: Standard, DADGAD, Open G..."
-          className="w-full border border-border rounded-lg px-3 py-2 bg-background focus:outline-none focus:ring-2 focus:ring-primary"
         />
       </div>
     </div>
