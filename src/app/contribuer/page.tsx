@@ -6,6 +6,8 @@ import { SongForm, type SongFormData } from "@/components/SongForm"
 import { ChordEditor } from "@/components/chord-editor/ChordEditor"
 import { ChordPreview } from "@/components/chord-editor/ChordPreview"
 import { slugify } from "@/lib/slugify"
+import { Button } from "@/components/ui/button"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 
 const DEFAULT_FORM: SongFormData = {
   title: "",
@@ -128,9 +130,9 @@ export default function ContribuerPage() {
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 text-sm">
-          {error}
-        </div>
+        <Alert variant="destructive">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
       )}
 
       <section className="space-y-4">
@@ -146,12 +148,13 @@ export default function ContribuerPage() {
       {/* Preview toggle */}
       {content.trim() && (
         <section className="space-y-3">
-          <button
+          <Button
+            variant="link"
             onClick={() => setShowPreview((v) => !v)}
-            className="text-sm text-primary underline cursor-pointer hover:text-primary/80 transition-colors"
+            className="p-0 h-auto"
           >
             {showPreview ? "Masquer la preview" : "Voir la preview"}
-          </button>
+          </Button>
           {showPreview && (
             <div className="border border-border rounded-lg px-4 py-3 bg-secondary/5">
               <ChordPreview content={content} />
@@ -161,13 +164,14 @@ export default function ContribuerPage() {
       )}
 
       {/* Submit */}
-      <button
+      <Button
+        size="lg"
         onClick={handleSubmit}
         disabled={!canSubmit}
-        className="w-full py-3 bg-orange-500 hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-xl cursor-pointer transition-colors"
+        className="w-full bg-cta hover:bg-cta/90 text-white"
       >
         {loading ? "Publication..." : "Publier les accords"}
-      </button>
+      </Button>
     </main>
   )
 }

@@ -4,6 +4,17 @@ import { use, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { ChordEditor } from "@/components/chord-editor/ChordEditor"
 import type { Instrument } from "@/types/database"
+import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 const INSTRUMENTS: { value: Instrument; label: string }[] = [
   { value: "guitare", label: "Guitare" },
@@ -11,6 +22,10 @@ const INSTRUMENTS: { value: Instrument; label: string }[] = [
   { value: "basse", label: "Basse" },
   { value: "ukulele-bass", label: "Ukulele Bass" },
 ]
+
+const INSTRUMENT_LABEL: Record<Instrument, string> = Object.fromEntries(
+  INSTRUMENTS.map((i) => [i.value, i.label])
+) as Record<Instrument, string>
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -159,51 +174,66 @@ export default function EditChordSheetPage({ params }: PageProps) {
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 text-sm">
-          {error}
-        </div>
+        <Alert variant="destructive">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
       )}
 
       <section className="space-y-4">
         <h2 className="text-lg font-semibold">Paramètres</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* Instrument */}
-          <div>
-            <label className="block text-sm font-medium mb-1">Instrument</label>
-            <select
+          <div className="space-y-1">
+            <Label>Instrument</Label>
+            <Select
               value={instrument}
-              onChange={(e) => setInstrument(e.target.value as Instrument)}
-              className="w-full border border-border rounded-lg px-3 py-2 bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+              onValueChange={(v) => setInstrument(v as Instrument)}
             >
-              {INSTRUMENTS.map((i) => (
-                <option key={i.value} value={i.value}>{i.label}</option>
-              ))}
-            </select>
+              <SelectTrigger className="w-full">
+                <SelectValue>
+                  {(v: Instrument | null) => v ? INSTRUMENT_LABEL[v] : "Sélectionner..."}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {INSTRUMENTS.map((i) => (
+                  <SelectItem key={i.value} value={i.value}>{i.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Capo */}
-          <div>
-            <label className="block text-sm font-medium mb-1">Capo</label>
-            <select
-              value={capo}
-              onChange={(e) => setCapo(parseInt(e.target.value))}
-              className="w-full border border-border rounded-lg px-3 py-2 bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+          <div className="space-y-1">
+            <Label>Capo</Label>
+            <Select
+              value={String(capo)}
+              onValueChange={(v) => setCapo(parseInt(v ?? "0"))}
             >
-              {Array.from({ length: 13 }, (_, i) => (
-                <option key={i} value={i}>{i === 0 ? "Sans capo" : `Capo ${i}`}</option>
-              ))}
-            </select>
+              <SelectTrigger className="w-full">
+                <SelectValue>
+                  {(v: string | null) =>
+                    v === null ? "Sans capo" : parseInt(v) === 0 ? "Sans capo" : `Capo ${v}`
+                  }
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {Array.from({ length: 13 }, (_, i) => (
+                  <SelectItem key={i} value={String(i)}>
+                    {i === 0 ? "Sans capo" : `Capo ${i}`}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Tuning */}
-          <div className="sm:col-span-2">
-            <label className="block text-sm font-medium mb-1">Accordage</label>
-            <input
+          <div className="sm:col-span-2 space-y-1">
+            <Label>Accordage</Label>
+            <Input
               type="text"
               value={tuning}
               onChange={(e) => setTuning(e.target.value)}
               placeholder="ex: Standard, DADGAD, Open G..."
-              className="w-full border border-border rounded-lg px-3 py-2 bg-background focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
         </div>
@@ -214,13 +244,14 @@ export default function EditChordSheetPage({ params }: PageProps) {
         <ChordEditor initialContent={content} onContentChange={setContent} />
       </section>
 
-      <button
+      <Button
+        size="lg"
         onClick={handleSave}
         disabled={saving || !content.trim()}
-        className="w-full py-3 bg-orange-500 hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-xl cursor-pointer transition-colors"
+        className="w-full bg-cta hover:bg-cta/90 text-white"
       >
         {saving ? "Sauvegarde..." : "Sauvegarder les modifications"}
-      </button>
+      </Button>
     </main>
   )
 }
