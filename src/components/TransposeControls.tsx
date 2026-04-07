@@ -2,6 +2,7 @@
 
 import { Minus, Plus } from 'lucide-react'
 import { getTransposedKey } from '@/lib/transpose'
+import { Button } from '@/components/ui/button'
 
 interface TransposeControlsProps {
   semitones: number
@@ -14,25 +15,29 @@ export function TransposeControls({ semitones, onChange, originalKey }: Transpos
 
   return (
     <div className="flex items-center gap-3">
-      <span className="text-sm text-gray-500">Transposer</span>
+      <span className="text-sm text-muted-foreground">Transposer</span>
       <div className="flex items-center gap-2">
-        <button
+        <Button
+          variant="outline"
+          size="icon"
+          className="h-8 w-8"
           onClick={() => onChange(semitones - 1)}
-          className="w-8 h-8 flex items-center justify-center rounded-full border border-gray-300 hover:bg-gray-100 transition-colors"
           aria-label="Baisser d'un demi-ton"
         >
           <Minus size={14} />
-        </button>
+        </Button>
         <span className="w-8 text-center text-sm font-semibold tabular-nums">
           {semitones > 0 ? `+${semitones}` : semitones}
         </span>
-        <button
+        <Button
+          variant="outline"
+          size="icon"
+          className="h-8 w-8"
           onClick={() => onChange(semitones + 1)}
-          className="w-8 h-8 flex items-center justify-center rounded-full border border-gray-300 hover:bg-gray-100 transition-colors"
           aria-label="Monter d'un demi-ton"
         >
           <Plus size={14} />
-        </button>
+        </Button>
       </div>
       {transposedKey && (
         <span className="text-sm font-medium text-chord">

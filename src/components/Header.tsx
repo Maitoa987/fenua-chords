@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Menu, X, Music, User, LogOut } from "lucide-react";
 import { MobileMenu } from "./MobileMenu";
 import { createClient } from "@/lib/supabase/client";
+import { Button, buttonVariants } from "@/components/ui/button";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 
 const navLinks = [
@@ -60,38 +61,41 @@ export function Header() {
           ))}
           <Link
             href="/contribuer"
-            className="bg-cta text-white px-4 py-2 rounded-lg font-semibold hover:bg-cta/90 transition-colors duration-200 cursor-pointer"
+            className={buttonVariants({ variant: "default", className: "bg-cta hover:bg-cta/90 text-white" })}
           >
             Contribuer
           </Link>
           {user ? (
             <div className="flex items-center gap-3">
               <User className="w-5 h-5 text-primary" />
-              <button
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={handleLogout}
-                className="flex items-center gap-1.5 text-text-muted hover:text-primary transition-colors duration-200 cursor-pointer"
                 aria-label="Déconnexion"
               >
                 <LogOut className="w-5 h-5" />
-              </button>
+              </Button>
             </div>
           ) : (
             <Link
               href="/connexion"
-              className="text-text-muted hover:text-primary transition-colors duration-200"
+              className={buttonVariants({ variant: "ghost" })}
             >
               Connexion
             </Link>
           )}
         </nav>
 
-        <button
-          className="md:hidden p-2 cursor-pointer"
+        <Button
+          variant="ghost"
+          size="icon"
+          className="md:hidden"
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"}
         >
           {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </button>
+        </Button>
       </div>
 
       {menuOpen && (

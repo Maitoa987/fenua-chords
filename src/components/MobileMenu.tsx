@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { User } from "@supabase/supabase-js";
+import { Button, buttonVariants } from "@/components/ui/button";
 
 interface MobileMenuProps {
   onClose: () => void;
@@ -10,24 +11,41 @@ interface MobileMenuProps {
 export function MobileMenu({ onClose, user, onLogout }: MobileMenuProps) {
   return (
     <nav className="md:hidden border-t border-primary/10 bg-surface p-4 space-y-3">
-      <Link href="/artistes" onClick={onClose} className="block py-2 text-text-muted hover:text-primary transition-colors duration-200">
+      <Link
+        href="/artistes"
+        onClick={onClose}
+        className={buttonVariants({ variant: "ghost", className: "w-full justify-start" })}
+      >
         Artistes
       </Link>
-      <Link href="/chansons" onClick={onClose} className="block py-2 text-text-muted hover:text-primary transition-colors duration-200">
+      <Link
+        href="/chansons"
+        onClick={onClose}
+        className={buttonVariants({ variant: "ghost", className: "w-full justify-start" })}
+      >
         Chansons
       </Link>
-      <Link href="/contribuer" onClick={onClose} className="block py-2 bg-cta text-white text-center rounded-lg font-semibold cursor-pointer">
+      <Link
+        href="/contribuer"
+        onClick={onClose}
+        className={buttonVariants({ variant: "default", className: "w-full bg-cta hover:bg-cta/90 text-white" })}
+      >
         Contribuer
       </Link>
       {user ? (
-        <button
+        <Button
+          variant="ghost"
+          className="w-full justify-start"
           onClick={() => { onClose(); onLogout(); }}
-          className="block w-full py-2 text-left text-text-muted hover:text-primary transition-colors duration-200 cursor-pointer"
         >
           Deconnexion
-        </button>
+        </Button>
       ) : (
-        <Link href="/connexion" onClick={onClose} className="block py-2 text-text-muted hover:text-primary transition-colors duration-200">
+        <Link
+          href="/connexion"
+          onClick={onClose}
+          className={buttonVariants({ variant: "ghost", className: "w-full justify-start" })}
+        >
           Connexion
         </Link>
       )}
