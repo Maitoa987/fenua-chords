@@ -1,0 +1,41 @@
+import { parseChordPro } from '@/lib/chordpro'
+
+interface ChordRendererProps {
+  content: string
+}
+
+export function ChordRenderer({ content }: ChordRendererProps) {
+  const lines = parseChordPro(content)
+
+  return (
+    <div className="font-mono text-base leading-relaxed whitespace-pre-wrap">
+      {lines.map((line, lineIndex) => {
+        const hasChords = line.segments.some((seg) => seg.chord !== null)
+
+        return (
+          <div key={lineIndex} className="flex flex-wrap">
+            {line.segments.map((seg, segIndex) => (
+              <span
+                key={segIndex}
+                style={{
+                  position: 'relative',
+                  ...(hasChords ? { paddingTop: '1.4em' } : {}),
+                }}
+              >
+                {seg.chord !== null && (
+                  <span
+                    style={{ position: 'absolute', top: 0, left: 0 }}
+                    className="font-mono font-bold text-chord text-sm whitespace-nowrap"
+                  >
+                    {seg.chord}
+                  </span>
+                )}
+                {seg.text}
+              </span>
+            ))}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
