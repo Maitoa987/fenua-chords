@@ -1,9 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu, X, Music } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Menu, X, Music, User, LogOut } from "lucide-react";
 import { MobileMenu } from "./MobileMenu";
+import { createClient } from "@/lib/supabase/client";
+import type { User as SupabaseUser } from "@supabase/supabase-js";
 
 const navLinks = [
   { href: "/artistes", label: "Artistes" },
@@ -11,7 +14,31 @@ const navLinks = [
 ];
 
 export function Header() {
+  const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [user, setUser] = useState<SupabaseUser | null>(null);
+
+  useEffect(() => {
+    const supabase = createClient();
+
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/");
+  };
 
   return (
     <header className="sticky top-0 z-30 bg-surface/90 backdrop-blur border-b border-primary/10">
@@ -37,12 +64,25 @@ export function Header() {
           >
             Contribuer
           </Link>
-          <Link
-            href="/connexion"
-            className="text-text-muted hover:text-primary transition-colors duration-200"
-          >
-            Connexion
-          </Link>
+          {user ? (
+            <div className="flex items-center gap-3">
+              <User className="w-5 h-5 text-primary" />
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-1.5 text-text-muted hover:text-primary transition-colors duration-200 cursor-pointer"
+                aria-label="Déconnexion"
+              >
+                <LogOut className="w-5 h-5" />
+              </button>
+            </div>
+          ) : (
+            <Link
+              href="/connexion"
+              className="text-text-muted hover:text-primary transition-colors duration-200"
+            >
+              Connexion
+            </Link>
+          )}
         </nav>
 
         <button
@@ -54,7 +94,13 @@ export function Header() {
         </button>
       </div>
 
-      {menuOpen && <MobileMenu onClose={() => setMenuOpen(false)} />}
+      {menuOpen && (
+        <MobileMenu
+          onClose={() => setMenuOpen(false)}
+          user={user}
+          onLogout={handleLogout}
+        />
+      )}
     </header>
   );
 }
