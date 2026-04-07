@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
-import { Varela_Round, Nunito_Sans } from "next/font/google";
+import { Varela_Round, Nunito_Sans, Geist } from "next/font/google";
 import { Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const varelaRound = Varela_Round({
   weight: "400",
@@ -37,7 +40,7 @@ export default function RootLayout({
   return (
     <html
       lang="fr"
-      className={`${varelaRound.variable} ${nunitoSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={cn("h-full", "antialiased", varelaRound.variable, nunitoSans.variable, geistMono.variable, "font-sans", geist.variable)}
     >
       <body className="min-h-full flex flex-col">
         <Header />
