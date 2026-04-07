@@ -1,10 +1,11 @@
 "use client"
 
 import type { Style, Instrument } from "@/types/database"
+import { ArtistAutocomplete, type ArtistValue } from "@/components/ArtistAutocomplete"
 
 export interface SongFormData {
   title: string
-  artistName: string
+  artist: ArtistValue | null
   style: Style
   instrument: Instrument
   originalKey: string
@@ -61,12 +62,9 @@ export function SongForm({ data, onChange }: SongFormProps) {
       {/* Artist — span 2 */}
       <div className="sm:col-span-2">
         <label className="block text-sm font-medium mb-1">Artiste *</label>
-        <input
-          type="text"
-          value={data.artistName}
-          onChange={(e) => update("artistName", e.target.value)}
-          placeholder="Nom de l'artiste"
-          className="w-full border border-border rounded-lg px-3 py-2 bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+        <ArtistAutocomplete
+          value={data.artist}
+          onChange={(v) => onChange({ ...data, artist: v })}
         />
         <p className="text-xs text-text-muted mt-1">
           Si l&apos;artiste n&apos;existe pas encore, il sera créé automatiquement.

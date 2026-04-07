@@ -9,7 +9,7 @@ import { slugify } from "@/lib/slugify"
 
 const DEFAULT_FORM: SongFormData = {
   title: "",
-  artistName: "",
+  artist: null,
   style: "bringue",
   instrument: "guitare",
   originalKey: "",
@@ -27,7 +27,7 @@ export default function ContribuerPage() {
 
   const canSubmit =
     formData.title.trim().length > 0 &&
-    formData.artistName.trim().length > 0 &&
+    formData.artist !== null &&
     content.trim().length > 0 &&
     !loading
 
@@ -48,32 +48,37 @@ export default function ContribuerPage() {
       }
 
       // Find or create artist
-      const artistSlug = slugify(formData.artistName)
+      if (!formData.artist) throw new Error("Artiste requis")
       let artistId: string
 
-      const { data: existingArtist } = await supabase
-        .from("artists")
-        .select("id")
-        .eq("slug", artistSlug)
-        .single()
-
-      if (existingArtist) {
-        artistId = existingArtist.id
+      if (formData.artist.id) {
+        artistId = formData.artist.id
       } else {
-        const { data: newArtist, error: artistError } = await supabase
+        const artistSlug = slugify(formData.artist.name)
+        const { data: existingArtist } = await supabase
           .from("artists")
-          .insert({ name: formData.artistName, slug: artistSlug })
           .select("id")
+          .eq("slug", artistSlug)
           .single()
 
-        if (artistError || !newArtist) {
-          throw new Error("Impossible de créer l'artiste")
+        if (existingArtist) {
+          artistId = existingArtist.id
+        } else {
+          const { data: newArtist, error: artistError } = await supabase
+            .from("artists")
+            .insert({ name: formData.artist.name, slug: artistSlug })
+            .select("id")
+            .single()
+
+          if (artistError || !newArtist) {
+            throw new Error("Impossible de créer l'artiste")
+          }
+          artistId = newArtist.id
         }
-        artistId = newArtist.id
       }
 
       // Create song
-      const songSlug = slugify(`${formData.artistName}-${formData.title}`)
+      const songSlug = slugify(`${formData.artist.name}-${formData.title}`)
       const { data: song, error: songError } = await supabase
         .from("songs")
         .insert({
