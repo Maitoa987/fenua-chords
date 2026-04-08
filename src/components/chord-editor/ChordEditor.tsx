@@ -4,6 +4,9 @@ import { useState, useEffect } from "react"
 import { TapToChord } from "./TapToChord"
 import { ChordProTextarea } from "./ChordProTextarea"
 import { wordsToChordPro, extractLyrics, chordProToWordMap } from "@/lib/chordpro"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Textarea } from "@/components/ui/textarea"
+import { Button } from "@/components/ui/button"
 
 type Mode = "simple" | "texte"
 
@@ -32,21 +35,20 @@ export function ChordEditor({ initialContent = "", onContentChange }: ChordEdito
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode, lyrics, chordMap, chordProText])
 
-  function switchToTexte() {
-    // Serialize current simple state to ChordPro text
-    const content = wordsToChordPro(lyrics, chordMap)
-    setChordProText(content)
-    setMode("texte")
-  }
-
-  function switchToSimple() {
-    // Parse ChordPro text back to lyrics + map
-    const parsedLyrics = extractLyrics(chordProText)
-    const parsedMap = chordProToWordMap(chordProText)
-    setLyrics(parsedLyrics)
-    setChordMap(parsedMap)
-    setLyricsConfirmed(parsedLyrics.trim().length > 0)
-    setMode("simple")
+  function switchMode(newMode: Mode) {
+    if (newMode === mode) return
+    if (newMode === "texte") {
+      const content = wordsToChordPro(lyrics, chordMap)
+      setChordProText(content)
+      setMode("texte")
+    } else {
+      const parsedLyrics = extractLyrics(chordProText)
+      const parsedMap = chordProToWordMap(chordProText)
+      setLyrics(parsedLyrics)
+      setChordMap(parsedMap)
+      setLyricsConfirmed(parsedLyrics.trim().length > 0)
+      setMode("simple")
+    }
   }
 
   function handleChordMapChange(newMap: Map<string, string>) {
@@ -56,55 +58,38 @@ export function ChordEditor({ initialContent = "", onContentChange }: ChordEdito
   return (
     <div className="space-y-4">
       {/* Mode toggle */}
-      <div className="flex gap-2">
-        <button
-          onClick={() => mode === "texte" ? switchToSimple() : undefined}
-          className={`px-4 py-2 rounded-lg text-sm font-medium cursor-pointer transition-colors ${
-            mode === "simple"
-              ? "bg-primary text-white"
-              : "bg-secondary/15 text-foreground hover:bg-secondary/30"
-          }`}
-        >
-          Mode simple
-        </button>
-        <button
-          onClick={() => mode === "simple" ? switchToTexte() : undefined}
-          className={`px-4 py-2 rounded-lg text-sm font-medium cursor-pointer transition-colors ${
-            mode === "texte"
-              ? "bg-primary text-white"
-              : "bg-secondary/15 text-foreground hover:bg-secondary/30"
-          }`}
-        >
-          Mode texte
-        </button>
-      </div>
+      <Tabs value={mode} onValueChange={(v) => switchMode(v as Mode)}>
+        <TabsList>
+          <TabsTrigger value="simple">Mode simple</TabsTrigger>
+          <TabsTrigger value="texte">Mode texte</TabsTrigger>
+        </TabsList>
+      </Tabs>
 
       {/* Simple mode */}
       {mode === "simple" && (
         <div className="space-y-4">
           {!lyricsConfirmed ? (
             <div className="space-y-3">
-              <p className="text-sm text-text-muted">
+              <p className="text-sm text-muted-foreground">
                 Collez les paroles de la chanson, puis cliquez sur &ldquo;Placer les accords&rdquo;.
               </p>
-              <textarea
+              <Textarea
                 value={lyrics}
                 onChange={(e) => setLyrics(e.target.value)}
                 rows={10}
                 placeholder={"Ia ora na tatou\nE haere mai..."}
-                className="w-full font-mono text-sm border border-border rounded-lg px-3 py-2 bg-background focus:outline-none focus:ring-2 focus:ring-primary resize-y"
+                className="font-mono text-sm resize-y"
               />
-              <button
+              <Button
                 onClick={() => setLyricsConfirmed(true)}
                 disabled={!lyrics.trim()}
-                className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium cursor-pointer hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Placer les accords →
-              </button>
+              </Button>
             </div>
           ) : (
             <div className="space-y-3">
-              <p className="text-sm text-text-muted">
+              <p className="text-sm text-muted-foreground">
                 Appuyez sur un mot pour lui assigner un accord.
               </p>
               <div className="border border-border rounded-lg px-4 py-3">
@@ -114,15 +99,16 @@ export function ChordEditor({ initialContent = "", onContentChange }: ChordEdito
                   onChordMapChange={handleChordMapChange}
                 />
               </div>
-              <button
+              <Button
+                variant="link"
                 onClick={() => {
                   setLyricsConfirmed(false)
                   setChordMap(new Map())
                 }}
-                className="text-sm text-text-muted underline cursor-pointer hover:text-foreground transition-colors"
+                className="p-0 h-auto text-muted-foreground"
               >
                 Modifier les paroles
-              </button>
+              </Button>
             </div>
           )}
         </div>
