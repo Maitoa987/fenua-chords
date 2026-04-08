@@ -78,7 +78,7 @@ export default async function ChansonPage({ searchParams }: Props) {
       </div>
 
       {!songs || songs.length === 0 ? (
-        <p className="text-muted-foreground">Aucune chanson trouvee.</p>
+        <p className="text-muted-foreground">Aucune chanson trouvée.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {songs.map((song) => {

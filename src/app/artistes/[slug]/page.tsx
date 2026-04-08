@@ -72,7 +72,15 @@ export default async function ArtistDetailPage({ params }: Props) {
 
       <h2 className="font-heading text-xl text-foreground mb-4">Chansons</h2>
       {!songs || songs.length === 0 ? (
-        <p className="text-muted-foreground">Aucune chanson publiée pour le moment.</p>
+        <div className="text-center py-8">
+          <p className="text-muted-foreground mb-4">Aucune chanson publiee pour le moment.</p>
+          <Link
+            href="/contribuer"
+            className="text-primary hover:underline font-medium"
+          >
+            Contribuer les accords d&apos;une chanson de {artist.name}
+          </Link>
+        </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {songs.map((song) => (

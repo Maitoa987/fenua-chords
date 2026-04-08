@@ -66,7 +66,7 @@ export function SongForm({ data, onChange }: SongFormProps) {
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       {/* Title — span 2 */}
       <div className="sm:col-span-2 space-y-1">
-        <Label>Titre *</Label>
+        <Label>Titre <span className="text-destructive">*</span></Label>
         <Input
           type="text"
           value={data.title}
@@ -77,7 +77,7 @@ export function SongForm({ data, onChange }: SongFormProps) {
 
       {/* Artist — span 2 */}
       <div className="sm:col-span-2 space-y-1">
-        <Label>Artiste *</Label>
+        <Label>Artiste <span className="text-destructive">*</span></Label>
         <ArtistAutocomplete
           value={data.artist}
           onChange={(v) => onChange({ ...data, artist: v })}
