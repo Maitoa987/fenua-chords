@@ -70,6 +70,19 @@ export default function ContribuerPage() {
         return
       }
 
+      // Check if banned
+      const { data: userProfile } = await supabase
+        .from("profiles")
+        .select("is_banned")
+        .eq("id", user.id)
+        .single()
+
+      if (userProfile?.is_banned) {
+        setError("Ton compte a ete suspendu. Tu ne peux plus contribuer.")
+        setLoading(false)
+        return
+      }
+
       // Verify Turnstile token (only if widget was shown)
       if (turnstileToken) {
         const verifyRes = await fetch("/api/verify-turnstile", {
