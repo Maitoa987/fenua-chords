@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server"
 import { MergeArtists } from "./MergeArtists"
 import { DeleteArtistButton } from "./DeleteArtistButton"
+import { EditArtistButton } from "./EditArtistButton"
 
 export default async function AdminArtistesPage() {
   const supabase = await createClient()
@@ -38,9 +39,12 @@ export default async function AdminArtistesPage() {
                   {artist.origin ?? "Origine inconnue"} · {artist.songCount} chanson(s) · <span className="font-mono">{artist.slug}</span>
                 </p>
               </div>
-              {artist.songCount === 0 && (
-                <DeleteArtistButton id={artist.id} name={artist.name} />
-              )}
+              <div className="flex items-center gap-1 flex-shrink-0">
+                <EditArtistButton id={artist.id} name={artist.name} origin={artist.origin} />
+                {artist.songCount === 0 && (
+                  <DeleteArtistButton id={artist.id} name={artist.name} />
+                )}
+              </div>
             </div>
           ))
         ) : (
