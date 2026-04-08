@@ -6,9 +6,10 @@ interface MobileMenuProps {
   onClose: () => void;
   user: User | null;
   onLogout: () => void;
+  isAdmin?: boolean;
 }
 
-export function MobileMenu({ onClose, user, onLogout }: MobileMenuProps) {
+export function MobileMenu({ onClose, user, onLogout, isAdmin }: MobileMenuProps) {
   return (
     <nav className="md:hidden border-t border-border bg-card p-4 space-y-3">
       <Link
@@ -32,6 +33,15 @@ export function MobileMenu({ onClose, user, onLogout }: MobileMenuProps) {
       >
         Contribuer
       </Link>
+      {isAdmin && (
+        <Link
+          href="/admin"
+          onClick={onClose}
+          className={buttonVariants({ variant: "ghost", className: "w-full justify-start" })}
+        >
+          Admin
+        </Link>
+      )}
       {user ? (
         <Button
           variant="ghost"

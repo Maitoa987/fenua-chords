@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Menu, X, Music, User, LogOut } from "lucide-react";
+import { Menu, X, Music, User, LogOut, Shield } from "lucide-react";
 import { MobileMenu } from "./MobileMenu";
 import { createClient } from "@/lib/supabase/client";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -18,18 +18,24 @@ export function Header() {
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
   const [user, setUser] = useState<SupabaseUser | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const supabase = createClient();
 
     supabase.auth.getUser().then(({ data: { user } }) => {
       setUser(user);
+      if (user) {
+        supabase.from("profiles").select("role").eq("id", user.id).single()
+          .then(({ data }) => { if (data?.role === "admin") setIsAdmin(true) })
+      }
     });
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
+      if (!session?.user) setIsAdmin(false);
     });
 
     return () => subscription.unsubscribe();
@@ -65,6 +71,12 @@ export function Header() {
           >
             Contribuer
           </Link>
+          {isAdmin && (
+            <Link href="/admin" className={buttonVariants({ variant: "ghost", size: "sm" })}>
+              <Shield className="w-4 h-4 mr-1" />
+              Admin
+            </Link>
+          )}
           {user ? (
             <div className="flex items-center gap-3">
               <User className="w-5 h-5 text-primary" />
@@ -103,6 +115,7 @@ export function Header() {
           onClose={() => setMenuOpen(false)}
           user={user}
           onLogout={handleLogout}
+          isAdmin={isAdmin}
         />
       )}
     </header>
