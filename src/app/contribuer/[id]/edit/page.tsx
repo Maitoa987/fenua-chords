@@ -15,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { editSheetSchema } from "@/lib/validation"
 
 const INSTRUMENTS: { value: Instrument; label: string }[] = [
   { value: "guitare", label: "Guitare" },
@@ -107,6 +108,14 @@ export default function EditChordSheetPage({ params }: PageProps) {
     setSaving(true)
     setError(null)
 
+    const parsed = editSheetSchema.safeParse({ instrument, capo, tuning, content })
+
+    if (!parsed.success) {
+      setError(parsed.error.issues[0]?.message ?? "Données invalides")
+      setSaving(false)
+      return
+    }
+
     try {
       const { createClient } = await import("@/lib/supabase/client")
       const supabase = createClient()
@@ -114,10 +123,10 @@ export default function EditChordSheetPage({ params }: PageProps) {
       const { error: updateError } = await supabase
         .from("chord_sheets")
         .update({
-          instrument,
-          capo: capo || null,
-          tuning: tuning || null,
-          content,
+          instrument: parsed.data.instrument,
+          capo: parsed.data.capo || null,
+          tuning: parsed.data.tuning || null,
+          content: parsed.data.content,
         })
         .eq("id", id)
 
