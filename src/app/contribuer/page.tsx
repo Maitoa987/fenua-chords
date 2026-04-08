@@ -128,7 +128,7 @@ export default function ContribuerPage() {
       }
 
       // Create song with slug collision retry
-      let songSlug = slugify(`${parsed.data.artistName}-${parsed.data.title}`)
+      const songSlug = slugify(`${parsed.data.artistName}-${parsed.data.title}`)
       let song = null
 
       for (let attempt = 0; attempt < 5; attempt++) {
@@ -175,8 +175,8 @@ export default function ContribuerPage() {
       }
 
       router.push(`/chansons/${song.slug}`)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Une erreur est survenue")
+    } catch {
+      setError("Une erreur est survenue. Réessaie plus tard.")
       setLoading(false)
     }
   }

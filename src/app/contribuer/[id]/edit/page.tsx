@@ -135,8 +135,8 @@ export default function EditChordSheetPage({ params }: PageProps) {
       }
 
       router.push(`/chansons/${sheet.songs.slug}`)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Une erreur est survenue")
+    } catch {
+      setError("Une erreur est survenue. Réessaie plus tard.")
       setSaving(false)
     }
   }
