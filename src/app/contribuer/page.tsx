@@ -68,6 +68,18 @@ export default function ContribuerPage() {
         return
       }
 
+      // Check rate limit
+      const { data: canProceed } = await supabase.rpc("check_rate_limit", {
+        user_uuid: user.id,
+        max_per_hour: 10,
+      })
+
+      if (!canProceed) {
+        setError("Tu as atteint la limite de contributions (10/heure). Réessaie plus tard.")
+        setLoading(false)
+        return
+      }
+
       // Find or create artist
       if (!formData.artist) throw new Error("Artiste requis")
       let artistId: string
