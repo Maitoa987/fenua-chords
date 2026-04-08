@@ -3,6 +3,9 @@ import { Music, Users, Guitar } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { SongCard } from "@/components/SongCard";
 import { StyleBadge } from "@/components/StyleBadge";
+import { Card, CardContent } from "@/components/ui/card";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import type { Style } from "@/types/database";
 
 const STYLES: Style[] = ["bringue", "himene", "variete", "traditionnel", "autre"];
@@ -38,13 +41,13 @@ export default async function HomePage() {
         <div className="flex flex-wrap gap-3 justify-center">
           <Link
             href="/chansons"
-            className="px-6 py-3 bg-primary text-white rounded-xl font-semibold hover:bg-primary/90 transition-colors"
+            className={cn(buttonVariants({ variant: "default", size: "lg" }))}
           >
             Explorer les chants
           </Link>
           <Link
             href="/contribuer"
-            className="px-6 py-3 bg-surface border border-primary/30 text-primary rounded-xl font-semibold hover:border-primary/60 transition-colors"
+            className={cn(buttonVariants({ variant: "outline", size: "lg" }))}
           >
             Contribuer
           </Link>
@@ -54,21 +57,27 @@ export default async function HomePage() {
       {/* Counters */}
       <section className="max-w-5xl mx-auto px-4 py-12">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-          <div className="bg-surface rounded-xl p-6 border border-primary/10 text-center">
-            <Music className="w-8 h-8 text-primary mx-auto mb-3" />
-            <p className="font-heading text-4xl text-text">{songCount ?? 0}</p>
-            <p className="text-text-muted mt-1">Chansons</p>
-          </div>
-          <div className="bg-surface rounded-xl p-6 border border-primary/10 text-center">
-            <Guitar className="w-8 h-8 text-primary mx-auto mb-3" />
-            <p className="font-heading text-4xl text-text">{artistCount ?? 0}</p>
-            <p className="text-text-muted mt-1">Artistes</p>
-          </div>
-          <div className="bg-surface rounded-xl p-6 border border-primary/10 text-center">
-            <Users className="w-8 h-8 text-primary mx-auto mb-3" />
-            <p className="font-heading text-4xl text-text">{contributorCount ?? 0}</p>
-            <p className="text-text-muted mt-1">Contributeurs</p>
-          </div>
+          <Card>
+            <CardContent className="p-6 text-center">
+              <Music className="w-8 h-8 text-primary mx-auto mb-3" />
+              <p className="font-heading text-4xl text-text">{songCount ?? 0}</p>
+              <p className="text-muted-foreground mt-1">Chansons</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-6 text-center">
+              <Guitar className="w-8 h-8 text-primary mx-auto mb-3" />
+              <p className="font-heading text-4xl text-text">{artistCount ?? 0}</p>
+              <p className="text-muted-foreground mt-1">Artistes</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-6 text-center">
+              <Users className="w-8 h-8 text-primary mx-auto mb-3" />
+              <p className="font-heading text-4xl text-text">{contributorCount ?? 0}</p>
+              <p className="text-muted-foreground mt-1">Contributeurs</p>
+            </CardContent>
+          </Card>
         </div>
       </section>
 
@@ -93,7 +102,7 @@ export default async function HomePage() {
           </Link>
         </div>
         {!recentSongs || recentSongs.length === 0 ? (
-          <p className="text-text-muted">Aucune chanson pour le moment.</p>
+          <p className="text-muted-foreground">Aucune chanson pour le moment.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {recentSongs.map((song) => {
