@@ -6,6 +6,7 @@ import { SongForm, type SongFormData } from "@/components/SongForm"
 import { ChordEditor } from "@/components/chord-editor/ChordEditor"
 import { ChordPreview } from "@/components/chord-editor/ChordPreview"
 import { slugify } from "@/lib/slugify"
+import { songSchema } from "@/lib/validation"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 
@@ -37,6 +38,24 @@ export default function ContribuerPage() {
     if (!canSubmit) return
     setLoading(true)
     setError(null)
+
+    const parsed = songSchema.safeParse({
+      title: formData.title,
+      artistName: formData.artist?.name ?? "",
+      artistId: formData.artist?.id ?? null,
+      style: formData.style,
+      instrument: formData.instrument,
+      originalKey: formData.originalKey,
+      capo: formData.capo,
+      tuning: formData.tuning,
+      content,
+    })
+
+    if (!parsed.success) {
+      setError(parsed.error.issues[0]?.message ?? "Données invalides")
+      setLoading(false)
+      return
+    }
 
     try {
       const { createClient } = await import("@/lib/supabase/client")
@@ -79,25 +98,36 @@ export default function ContribuerPage() {
         }
       }
 
-      // Create song
-      const songSlug = slugify(`${formData.artist.name}-${formData.title}`)
-      const { data: song, error: songError } = await supabase
-        .from("songs")
-        .insert({
-          title: formData.title,
-          slug: songSlug,
-          artist_id: artistId,
-          style: formData.style,
-          original_key: formData.originalKey || null,
-          created_by: user.id,
-          status: "published",
-        })
-        .select("id, slug")
-        .single()
+      // Create song with slug collision retry
+      let songSlug = slugify(`${parsed.data.artistName}-${parsed.data.title}`)
+      let song = null
 
-      if (songError || !song) {
-        throw new Error("Impossible de créer la chanson")
+      for (let attempt = 0; attempt < 5; attempt++) {
+        const trySlug = attempt === 0 ? songSlug : `${songSlug}-${attempt}`
+        const result = await supabase
+          .from("songs")
+          .insert({
+            title: parsed.data.title,
+            slug: trySlug,
+            artist_id: artistId,
+            style: parsed.data.style,
+            original_key: parsed.data.originalKey || null,
+            created_by: user.id,
+            status: "published",
+          })
+          .select("id, slug")
+          .single()
+
+        if (!result.error) {
+          song = result.data
+          break
+        }
+        if (!result.error.message.includes("unique") && !result.error.message.includes("duplicate")) {
+          throw new Error("Impossible de créer la chanson")
+        }
       }
+
+      if (!song) throw new Error("Impossible de créer la chanson (slug en conflit)")
 
       // Create chord sheet
       const { error: sheetError } = await supabase
@@ -107,7 +137,7 @@ export default function ContribuerPage() {
           instrument: formData.instrument,
           tuning: formData.tuning || null,
           capo: formData.capo || null,
-          content,
+          content: parsed.data.content,
           contributed_by: user.id,
         })
 
