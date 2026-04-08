@@ -1,6 +1,14 @@
 "use client"
 
 import { useState } from "react"
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 
 interface ChordPickerProps {
   recentChords: string[]
@@ -34,55 +42,47 @@ export function ChordPicker({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col justify-end">
-      {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black/30"
-        onClick={onClose}
-      />
-
-      {/* Sheet */}
-      <div className="relative bg-background rounded-t-2xl p-4 space-y-4 max-h-[80vh] overflow-y-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-text-muted">Accord actuel :</span>
-            {currentChord ? (
-              <>
-                <span className="font-mono font-bold text-chord">{currentChord}</span>
-                <button
-                  onClick={onRemove}
-                  className="text-xs text-red-500 underline cursor-pointer"
-                >
-                  Supprimer
-                </button>
-              </>
-            ) : (
-              <span className="text-sm italic text-text-muted">aucun</span>
-            )}
+    <Sheet open={true} onOpenChange={(open) => { if (!open) onClose() }}>
+      <SheetContent side="bottom" className="max-h-[80vh] overflow-y-auto rounded-t-2xl p-4 gap-4">
+        <SheetHeader className="p-0">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <SheetTitle className="text-sm font-medium text-muted-foreground">
+                Accord actuel :
+              </SheetTitle>
+              {currentChord ? (
+                <>
+                  <span className="font-mono font-bold text-chord">{currentChord}</span>
+                  <Button
+                    variant="link"
+                    size="xs"
+                    className="text-destructive p-0 h-auto"
+                    onClick={onRemove}
+                  >
+                    Supprimer
+                  </Button>
+                </>
+              ) : (
+                <span className="text-sm italic text-muted-foreground">aucun</span>
+              )}
+            </div>
           </div>
-          <button
-            onClick={onClose}
-            className="text-text-muted hover:text-foreground cursor-pointer"
-            aria-label="Fermer"
-          >
-            ✕
-          </button>
-        </div>
+        </SheetHeader>
 
         {/* Recent chords */}
         {recentChords.length > 0 && (
           <div>
-            <p className="text-xs text-text-muted mb-2">Récents</p>
+            <p className="text-xs text-muted-foreground mb-2">Récents</p>
             <div className="flex flex-wrap gap-2">
               {recentChords.map((chord) => (
-                <button
+                <Button
                   key={chord}
+                  variant="secondary"
+                  className="min-w-[44px] h-[44px] font-mono"
                   onClick={() => onSelect(chord)}
-                  className="min-w-[44px] h-[44px] px-2 font-mono text-sm bg-secondary/15 rounded-lg cursor-pointer hover:bg-secondary/30 transition-colors"
                 >
                   {chord}
-                </button>
+                </Button>
               ))}
             </div>
           </div>
@@ -90,40 +90,38 @@ export function ChordPicker({
 
         {/* Common chords grid */}
         <div>
-          <p className="text-xs text-text-muted mb-2">Accords courants</p>
+          <p className="text-xs text-muted-foreground mb-2">Accords courants</p>
           <div className="grid grid-cols-7 gap-2">
             {COMMON_CHORDS.map((chord) => (
-              <button
+              <Button
                 key={chord}
+                variant="outline"
+                className="min-w-[44px] h-[44px] font-mono"
                 onClick={() => onSelect(chord)}
-                className="min-w-[44px] h-[44px] font-mono text-sm bg-secondary/15 rounded-lg cursor-pointer hover:bg-secondary/30 transition-colors"
               >
                 {chord}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
 
         {/* Custom chord input */}
         <div>
-          <p className="text-xs text-text-muted mb-2">Accord personnalisé</p>
+          <p className="text-xs text-muted-foreground mb-2">Accord personnalisé</p>
           <form onSubmit={handleCustomSubmit} className="flex gap-2">
-            <input
+            <Input
               type="text"
               value={customInput}
               onChange={(e) => setCustomInput(e.target.value)}
               placeholder="ex: F#m7"
-              className="flex-1 border border-border rounded-lg px-3 py-2 font-mono text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+              className="flex-1 font-mono"
             />
-            <button
-              type="submit"
-              className="px-4 h-[44px] bg-primary text-white rounded-lg font-medium text-sm cursor-pointer hover:bg-primary/90 transition-colors"
-            >
+            <Button type="submit" className="h-[44px] px-4">
               OK
-            </button>
+            </Button>
           </form>
         </div>
-      </div>
-    </div>
+      </SheetContent>
+    </Sheet>
   )
 }
