@@ -19,6 +19,7 @@ type Mode = "login" | "signup" | "magic-link";
 export default function ConnexionPage() {
   const router = useRouter();
   const [mode, setMode] = useState<Mode>("login");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -63,6 +64,7 @@ export default function ConnexionPage() {
         password,
         options: {
           emailRedirectTo: `${window.location.origin}/callback`,
+          data: { username },
         },
       });
       if (error) {
@@ -124,6 +126,23 @@ export default function ConnexionPage() {
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Username (signup only) */}
+            {mode === "signup" && (
+              <div className="space-y-1">
+                <Label htmlFor="username">Nom d&apos;utilisateur</Label>
+                <Input
+                  id="username"
+                  type="text"
+                  placeholder="Ton pseudo"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  required
+                  minLength={2}
+                  maxLength={30}
+                />
+              </div>
+            )}
+
             {/* Email */}
             <div className="space-y-1">
               <Label htmlFor="email">Email</Label>
