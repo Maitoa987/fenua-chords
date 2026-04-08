@@ -2,6 +2,16 @@
 
 import { useState, useEffect, useRef, useCallback } from "react"
 import { createClient } from "@/lib/supabase/client"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command"
+import { XIcon } from "lucide-react"
 
 export interface ArtistValue {
   id: string | null
@@ -93,53 +103,68 @@ export function ArtistAutocomplete({ value, onChange }: ArtistAutocompleteProps)
         {value.id === null && (
           <span className="text-xs opacity-60 ml-1">(nouveau)</span>
         )}
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="icon-xs"
           onClick={clear}
-          className="ml-1 hover:opacity-70 transition-opacity font-bold leading-none cursor-pointer"
+          className="ml-1 hover:opacity-70 rounded-full"
           aria-label="Supprimer l'artiste"
         >
-          ×
-        </button>
+          <XIcon />
+        </Button>
       </span>
     )
   }
 
   return (
     <div ref={containerRef} className="relative">
-      <input
+      <Input
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         onFocus={() => query.trim() && setOpen(true)}
         placeholder="Nom de l'artiste"
-        className="w-full px-3 py-2.5 rounded-lg border border-primary/20 bg-surface text-base focus:border-primary focus:outline-none"
         autoComplete="off"
       />
 
       {open && (results.length > 0 || showCreateOption || loading) && (
-        <ul className="absolute z-20 w-full mt-1 bg-surface border border-primary/20 rounded-lg shadow-lg max-h-48 overflow-y-auto">
-          {loading && (
-            <li className="px-3 py-2 text-sm text-text-muted">Recherche...</li>
-          )}
-          {!loading && results.map((artist) => (
-            <li
-              key={artist.id}
-              onMouseDown={(e) => { e.preventDefault(); selectExisting(artist) }}
-              className="px-3 py-2 hover:bg-primary/10 cursor-pointer text-sm"
-            >
-              {artist.name}
-            </li>
-          ))}
-          {!loading && showCreateOption && (
-            <li
-              onMouseDown={(e) => { e.preventDefault(); selectNew() }}
-              className="px-3 py-2 hover:bg-primary/10 cursor-pointer text-sm text-primary font-medium border-t border-primary/10"
-            >
-              Créer &ldquo;{query.trim()}&rdquo;
-            </li>
-          )}
-        </ul>
+        <div className="absolute z-20 w-full mt-1 shadow-lg rounded-xl overflow-hidden border border-border">
+          <Command shouldFilter={false}>
+            <CommandList>
+              {loading && (
+                <CommandEmpty>Recherche...</CommandEmpty>
+              )}
+              {!loading && results.length === 0 && !showCreateOption && (
+                <CommandEmpty>Aucun résultat.</CommandEmpty>
+              )}
+              {!loading && results.length > 0 && (
+                <CommandGroup>
+                  {results.map((artist) => (
+                    <CommandItem
+                      key={artist.id}
+                      value={artist.name}
+                      onSelect={() => selectExisting(artist)}
+                    >
+                      {artist.name}
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              )}
+              {!loading && showCreateOption && (
+                <CommandGroup>
+                  <CommandItem
+                    value={`__create__${query.trim()}`}
+                    onSelect={selectNew}
+                    className="text-primary font-medium"
+                  >
+                    Créer &ldquo;{query.trim()}&rdquo;
+                  </CommandItem>
+                </CommandGroup>
+              )}
+            </CommandList>
+          </Command>
+        </div>
       )}
     </div>
   )
