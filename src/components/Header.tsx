@@ -56,9 +56,8 @@ export function Header() {
   return (
     <header className="sticky top-0 z-30 bg-card/90 backdrop-blur border-b border-border">
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 font-heading text-xl text-primary">
-          <Image src="/logo.png" alt="Fenua Chords" width={32} height={32} className="w-8 h-8" />
-          Fenua Chords
+        <Link href="/">
+          <Image src="/logo-text.png" alt="Fenua Chords" width={140} height={40} className="h-10 w-auto" />
         </Link>
 
         <nav className="hidden md:flex items-center gap-6">
