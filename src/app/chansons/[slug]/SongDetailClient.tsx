@@ -1,6 +1,8 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
+import { Edit } from 'lucide-react'
 import { ChordRenderer } from '@/components/ChordRenderer'
 import { TransposeControls } from '@/components/TransposeControls'
 import { transposeChordPro } from '@/lib/transpose'
@@ -31,9 +33,10 @@ interface SheetWithProfile {
 interface SongDetailClientProps {
   sheets: SheetWithProfile[]
   originalKey: string | null
+  currentUserId: string | null
 }
 
-export function SongDetailClient({ sheets, originalKey }: SongDetailClientProps) {
+export function SongDetailClient({ sheets, originalKey, currentUserId }: SongDetailClientProps) {
   const [activeIndex, setActiveIndex] = useState(0)
   const [semitones, setSemitones] = useState(0)
 
@@ -92,6 +95,15 @@ export function SongDetailClient({ sheets, originalKey }: SongDetailClientProps)
             <span className="font-medium text-foreground">Contribution :</span>{' '}
             {activeSheet.profiles.username}
           </span>
+        )}
+        {currentUserId && activeSheet.contributed_by === currentUserId && (
+          <Link
+            href={`/contribuer/${activeSheet.id}/edit`}
+            className="text-sm text-primary hover:underline flex items-center gap-1"
+          >
+            <Edit className="w-3.5 h-3.5" />
+            Modifier
+          </Link>
         )}
       </div>
 

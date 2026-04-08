@@ -46,6 +46,8 @@ export default async function SongDetailPage({ params }: Props) {
   const { slug } = await params
   const supabase = await createClient()
 
+  const { data: { user } } = await supabase.auth.getUser()
+
   const { data: song } = await supabase
     .from('songs')
     .select(
@@ -124,7 +126,7 @@ export default async function SongDetailPage({ params }: Props) {
       </div>
 
       {/* Chord sheets with interactivity */}
-      <SongDetailClient sheets={typedSheets} originalKey={song.original_key} />
+      <SongDetailClient sheets={typedSheets} originalKey={song.original_key} currentUserId={user?.id ?? null} />
 
       {/* YouTube link */}
       {song.youtube_url && (
