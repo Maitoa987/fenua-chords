@@ -30,6 +30,14 @@ export const metadata: Metadata = {
   title: "Fenua Chords — Accords de chants polynesiens",
   description:
     "Partagez et trouvez les accords de bringues, himene et chants polynesiens.",
+  icons: {
+    icon: [
+      { url: "/favicon/favicon.ico", sizes: "any" },
+      { url: "/favicon/favicon-96x96.png", sizes: "96x96", type: "image/png" },
+    ],
+    apple: "/favicon/apple-touch-icon.png",
+  },
+  manifest: "/favicon/site.webmanifest",
 };
 
 export default function RootLayout({

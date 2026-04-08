@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Menu, X, Music } from "lucide-react";
+import Image from "next/image";
+import { Menu, X } from "lucide-react";
 import { MobileMenu } from "./MobileMenu";
 import { UserMenu } from "./UserMenu";
 import { createClient } from "@/lib/supabase/client";
@@ -56,7 +57,7 @@ export function Header() {
     <header className="sticky top-0 z-30 bg-card/90 backdrop-blur border-b border-border">
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 font-heading text-xl text-primary">
-          <Music className="w-6 h-6" />
+          <Image src="/logo.png" alt="Fenua Chords" width={32} height={32} className="w-8 h-8" />
           Fenua Chords
         </Link>
 
