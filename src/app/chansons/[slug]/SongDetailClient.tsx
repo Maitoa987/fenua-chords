@@ -5,6 +5,7 @@ import { ChordRenderer } from '@/components/ChordRenderer'
 import { TransposeControls } from '@/components/TransposeControls'
 import { transposeChordPro } from '@/lib/transpose'
 import type { Instrument } from '@/types/database'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 const instrumentLabels: Record<Instrument, string> = {
   guitare: 'Guitare',
@@ -49,27 +50,25 @@ export function SongDetailClient({ sheets, originalKey }: SongDetailClientProps)
     <div>
       {/* Sheet selector tabs */}
       {sheets.length > 1 && (
-        <div className="flex gap-2 mb-6 flex-wrap">
-          {sheets.map((sheet, index) => (
-            <button
-              key={sheet.id}
-              onClick={() => {
-                setActiveIndex(index)
-                setSemitones(0)
-              }}
-              className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors border ${
-                index === activeIndex
-                  ? 'bg-primary text-white border-primary'
-                  : 'bg-white text-text-muted border-gray-200 hover:border-primary hover:text-primary'
-              }`}
-            >
-              {instrumentLabels[sheet.instrument]}
-              {sheet.is_official && (
-                <span className="ml-1.5 text-xs opacity-75">★</span>
-              )}
-            </button>
-          ))}
-        </div>
+        <Tabs
+          value={String(activeIndex)}
+          onValueChange={(v) => {
+            setActiveIndex(Number(v))
+            setSemitones(0)
+          }}
+          className="mb-6"
+        >
+          <TabsList>
+            {sheets.map((sheet, index) => (
+              <TabsTrigger key={sheet.id} value={String(index)}>
+                {instrumentLabels[sheet.instrument]}
+                {sheet.is_official && (
+                  <span className="ml-1.5 text-xs opacity-75">★</span>
+                )}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
       )}
 
       {/* Sheet metadata */}

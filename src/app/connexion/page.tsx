@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 type Mode = "login" | "signup" | "magic-link";
 
@@ -87,35 +88,21 @@ export default function ConnexionPage() {
           </div>
 
           {/* Mode switcher */}
-          <div className="flex gap-1 bg-background rounded-lg p-1 mb-6">
-            <button
-              type="button"
-              onClick={() => { setMode("login"); setError(null); setSuccess(null); }}
-              className={`flex-1 py-1.5 rounded-md text-sm font-medium transition-colors duration-200 cursor-pointer ${
-                mode === "login" ? "bg-surface text-primary shadow-sm" : "text-text-muted hover:text-primary"
-              }`}
-            >
-              Connexion
-            </button>
-            <button
-              type="button"
-              onClick={() => { setMode("signup"); setError(null); setSuccess(null); }}
-              className={`flex-1 py-1.5 rounded-md text-sm font-medium transition-colors duration-200 cursor-pointer ${
-                mode === "signup" ? "bg-surface text-primary shadow-sm" : "text-text-muted hover:text-primary"
-              }`}
-            >
-              Inscription
-            </button>
-            <button
-              type="button"
-              onClick={() => { setMode("magic-link"); setError(null); setSuccess(null); }}
-              className={`flex-1 py-1.5 rounded-md text-sm font-medium transition-colors duration-200 cursor-pointer ${
-                mode === "magic-link" ? "bg-surface text-primary shadow-sm" : "text-text-muted hover:text-primary"
-              }`}
-            >
-              Lien magique
-            </button>
-          </div>
+          <Tabs
+            value={mode}
+            onValueChange={(v) => {
+              setMode(v as Mode);
+              setError(null);
+              setSuccess(null);
+            }}
+            className="mb-6"
+          >
+            <TabsList className="w-full">
+              <TabsTrigger value="login">Connexion</TabsTrigger>
+              <TabsTrigger value="signup">Inscription</TabsTrigger>
+              <TabsTrigger value="magic-link">Lien magique</TabsTrigger>
+            </TabsList>
+          </Tabs>
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
