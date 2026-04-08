@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Menu, X, Music, User, LogOut, Shield } from "lucide-react";
+import { Menu, X, Music } from "lucide-react";
 import { MobileMenu } from "./MobileMenu";
+import { UserMenu } from "./UserMenu";
 import { createClient } from "@/lib/supabase/client";
 import { Button, buttonVariants } from "@/components/ui/button";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
@@ -19,6 +20,7 @@ export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [username, setUsername] = useState("");
 
   useEffect(() => {
     const supabase = createClient();
@@ -26,8 +28,11 @@ export function Header() {
     supabase.auth.getUser().then(({ data: { user } }) => {
       setUser(user);
       if (user) {
-        supabase.from("profiles").select("role").eq("id", user.id).single()
-          .then(({ data }) => { if (data?.role === "admin") setIsAdmin(true) })
+        supabase.from("profiles").select("role, username").eq("id", user.id).single()
+          .then(({ data }) => {
+            if (data?.role === "admin") setIsAdmin(true)
+            if (data?.username) setUsername(data.username)
+          })
       }
     });
 
@@ -35,7 +40,7 @@ export function Header() {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
-      if (!session?.user) setIsAdmin(false);
+      if (!session?.user) { setIsAdmin(false); setUsername(""); }
     });
 
     return () => subscription.unsubscribe();
@@ -71,24 +76,8 @@ export function Header() {
           >
             Contribuer
           </Link>
-          {isAdmin && (
-            <Link href="/admin" className={buttonVariants({ variant: "ghost", size: "sm" })}>
-              <Shield className="w-4 h-4 mr-1" />
-              Admin
-            </Link>
-          )}
           {user ? (
-            <div className="flex items-center gap-3">
-              <User className="w-5 h-5 text-primary" />
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleLogout}
-                aria-label="Déconnexion"
-              >
-                <LogOut className="w-5 h-5" />
-              </Button>
-            </div>
+            <UserMenu username={username} isAdmin={isAdmin} onLogout={handleLogout} />
           ) : (
             <Link
               href="/connexion"
@@ -116,6 +105,7 @@ export function Header() {
           user={user}
           onLogout={handleLogout}
           isAdmin={isAdmin}
+          username={username}
         />
       )}
     </header>

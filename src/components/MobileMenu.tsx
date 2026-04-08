@@ -7,9 +7,10 @@ interface MobileMenuProps {
   user: User | null;
   onLogout: () => void;
   isAdmin?: boolean;
+  username?: string;
 }
 
-export function MobileMenu({ onClose, user, onLogout, isAdmin }: MobileMenuProps) {
+export function MobileMenu({ onClose, user, onLogout, isAdmin, username }: MobileMenuProps) {
   return (
     <nav className="md:hidden border-t border-border bg-card p-4 space-y-3">
       <Link
@@ -33,6 +34,25 @@ export function MobileMenu({ onClose, user, onLogout, isAdmin }: MobileMenuProps
       >
         Contribuer
       </Link>
+      {user && (
+        <>
+          {username && <p className="font-medium text-sm py-2 px-3">{username}</p>}
+          <Link
+            href="/profil"
+            onClick={onClose}
+            className={buttonVariants({ variant: "ghost", className: "w-full justify-start" })}
+          >
+            Mon profil
+          </Link>
+          <Link
+            href="/mes-contributions"
+            onClick={onClose}
+            className={buttonVariants({ variant: "ghost", className: "w-full justify-start" })}
+          >
+            Mes contributions
+          </Link>
+        </>
+      )}
       {isAdmin && (
         <Link
           href="/admin"
