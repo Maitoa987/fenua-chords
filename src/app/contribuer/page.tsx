@@ -9,6 +9,7 @@ import { slugify } from "@/lib/slugify"
 import { songSchema } from "@/lib/validation"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { TurnstileWidget } from "@/components/TurnstileWidget"
 
 const DEFAULT_FORM: SongFormData = {
   title: "",
@@ -27,6 +28,7 @@ export default function ContribuerPage() {
   const [showPreview, setShowPreview] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
 
   const canSubmit =
     formData.title.trim().length > 0 &&
@@ -66,6 +68,21 @@ export default function ContribuerPage() {
       if (!user) {
         router.push("/connexion")
         return
+      }
+
+      // Verify Turnstile token (only if widget was shown)
+      if (turnstileToken) {
+        const verifyRes = await fetch("/api/verify-turnstile", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token: turnstileToken }),
+        })
+        const { success } = await verifyRes.json()
+        if (!success) {
+          setError("Vérification échouée. Réessayez.")
+          setLoading(false)
+          return
+        }
       }
 
       // Check rate limit
@@ -204,6 +221,11 @@ export default function ContribuerPage() {
           )}
         </section>
       )}
+
+      {/* Turnstile */}
+      <div className="pt-1">
+        <TurnstileWidget onVerify={setTurnstileToken} />
+      </div>
 
       {/* Submit */}
       <Button

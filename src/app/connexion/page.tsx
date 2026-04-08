@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { TurnstileWidget } from "@/components/TurnstileWidget";
 
 type Mode = "login" | "signup" | "magic-link";
 
@@ -23,12 +24,29 @@ export default function ConnexionPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
     setSuccess(null);
+
+    if (mode === "signup") {
+      if (turnstileToken) {
+        const verifyRes = await fetch("/api/verify-turnstile", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token: turnstileToken }),
+        })
+        const { success } = await verifyRes.json()
+        if (!success) {
+          setError("Vérification échouée. Réessayez.")
+          setLoading(false)
+          return
+        }
+      }
+    }
 
     const supabase = createClient();
 
@@ -155,6 +173,12 @@ export default function ConnexionPage() {
               <Alert>
                 <AlertDescription>{success}</AlertDescription>
               </Alert>
+            )}
+
+            {mode === "signup" && (
+              <div className="pt-1">
+                <TurnstileWidget onVerify={setTurnstileToken} />
+              </div>
             )}
 
             <Button type="submit" disabled={loading} className="w-full">
