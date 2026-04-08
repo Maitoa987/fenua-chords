@@ -1,3 +1,4 @@
+export type UserRole = 'user' | 'admin'
 export type Style = 'bringue' | 'himene' | 'variete' | 'traditionnel' | 'autre'
 export type Instrument = 'guitare' | 'ukulele' | 'basse' | 'ukulele-bass'
 export type Visibility = 'private' | 'link' | 'public'
@@ -9,6 +10,8 @@ export interface Profile {
   username: string
   avatar_url: string | null
   bio: string | null
+  role: UserRole
+  is_banned: boolean
   created_at: string
 }
 
