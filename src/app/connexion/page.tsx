@@ -72,7 +72,7 @@ export default function ConnexionPage() {
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
       <div className="w-full max-w-md">
-        <div className="bg-surface rounded-2xl border border-primary/10 p-8 shadow-sm">
+        <div className="bg-card rounded-2xl border border-border p-8 shadow-sm">
           {/* Header */}
           <div className="text-center mb-8">
             <h1 className="font-heading text-2xl text-primary mb-2">
@@ -80,7 +80,7 @@ export default function ConnexionPage() {
               {mode === "signup" && "Créer un compte"}
               {mode === "magic-link" && "Lien magique"}
             </h1>
-            <p className="text-text-muted text-sm">
+            <p className="text-muted-foreground text-sm">
               {mode === "login" && "Accède à ta bibliothèque d'accords"}
               {mode === "signup" && "Rejoins la communauté Fenua Chords"}
               {mode === "magic-link" && "Connexion sans mot de passe"}
@@ -110,7 +110,7 @@ export default function ConnexionPage() {
             <div className="space-y-1">
               <Label htmlFor="email">Email</Label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted pointer-events-none" />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
                 <Input
                   id="email"
                   type="email"
@@ -128,7 +128,7 @@ export default function ConnexionPage() {
               <div className="space-y-1">
                 <Label htmlFor="password">Mot de passe</Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted pointer-events-none" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
                   <Input
                     id="password"
                     type="password"

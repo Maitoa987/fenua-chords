@@ -39,7 +39,7 @@ export function SongDetailClient({ sheets, originalKey }: SongDetailClientProps)
 
   if (sheets.length === 0) {
     return (
-      <p className="text-text-muted">Aucune grille d&apos;accords disponible pour le moment.</p>
+      <p className="text-muted-foreground">Aucune grille d&apos;accords disponible pour le moment.</p>
     )
   }
 
@@ -72,24 +72,24 @@ export function SongDetailClient({ sheets, originalKey }: SongDetailClientProps)
       )}
 
       {/* Sheet metadata */}
-      <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm text-text-muted mb-4">
+      <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm text-muted-foreground mb-4">
         <span>
-          <span className="font-medium text-text">Instrument :</span>{' '}
+          <span className="font-medium text-foreground">Instrument :</span>{' '}
           {instrumentLabels[activeSheet.instrument]}
         </span>
         {activeSheet.capo !== null && activeSheet.capo > 0 && (
           <span>
-            <span className="font-medium text-text">Capo :</span> {activeSheet.capo}
+            <span className="font-medium text-foreground">Capo :</span> {activeSheet.capo}
           </span>
         )}
         {activeSheet.tuning && (
           <span>
-            <span className="font-medium text-text">Accordage :</span> {activeSheet.tuning}
+            <span className="font-medium text-foreground">Accordage :</span> {activeSheet.tuning}
           </span>
         )}
         {activeSheet.profiles?.username && (
           <span>
-            <span className="font-medium text-text">Contribution :</span>{' '}
+            <span className="font-medium text-foreground">Contribution :</span>{' '}
             {activeSheet.profiles.username}
           </span>
         )}
@@ -105,7 +105,7 @@ export function SongDetailClient({ sheets, originalKey }: SongDetailClientProps)
       </div>
 
       {/* Chord sheet */}
-      <div className="bg-surface rounded-xl p-6 overflow-x-auto">
+      <div className="bg-card rounded-xl p-6 overflow-x-auto">
         <ChordRenderer content={transposedContent} />
       </div>
     </div>

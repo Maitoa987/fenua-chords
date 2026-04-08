@@ -16,9 +16,9 @@ export default async function ArtistesPage() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-10">
-      <h1 className="font-heading text-3xl text-text mb-8">Artistes</h1>
+      <h1 className="font-heading text-3xl text-foreground mb-8">Artistes</h1>
       {!artists || artists.length === 0 ? (
-        <p className="text-text-muted">Aucun artiste pour le moment.</p>
+        <p className="text-muted-foreground">Aucun artiste pour le moment.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {artists.map((artist) => {

@@ -126,7 +126,7 @@ export default function ContribuerPage() {
     <main className="max-w-2xl mx-auto px-4 py-8 space-y-8">
       <div>
         <h1 className="text-3xl font-bold mb-1">Contribuer</h1>
-        <p className="text-text-muted">Partagez les accords d&apos;une chanson polynésienne</p>
+        <p className="text-muted-foreground">Partagez les accords d&apos;une chanson polynésienne</p>
       </div>
 
       {error && (
@@ -168,7 +168,7 @@ export default function ContribuerPage() {
         size="lg"
         onClick={handleSubmit}
         disabled={!canSubmit}
-        className="w-full bg-cta hover:bg-cta/90 text-white"
+        className="w-full bg-accent hover:bg-accent/90 text-white"
       >
         {loading ? "Publication..." : "Publier les accords"}
       </Button>

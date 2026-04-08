@@ -42,7 +42,7 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-30 bg-surface/90 backdrop-blur border-b border-primary/10">
+    <header className="sticky top-0 z-30 bg-card/90 backdrop-blur border-b border-border">
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 font-heading text-xl text-primary">
           <Music className="w-6 h-6" />
@@ -54,14 +54,14 @@ export function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className="text-text-muted hover:text-primary transition-colors duration-200"
+              className="text-muted-foreground hover:text-primary transition-colors duration-200"
             >
               {link.label}
             </Link>
           ))}
           <Link
             href="/contribuer"
-            className={buttonVariants({ variant: "default", className: "bg-cta hover:bg-cta/90 text-white" })}
+            className={buttonVariants({ variant: "default", className: "bg-accent hover:bg-accent/90 text-white" })}
           >
             Contribuer
           </Link>

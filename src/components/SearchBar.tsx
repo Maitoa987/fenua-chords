@@ -27,13 +27,13 @@ export function SearchBar({ placeholder = "Rechercher une chanson ou un artiste.
 
   return (
     <form onSubmit={handleSubmit} className="relative w-full max-w-xl">
-      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted pointer-events-none" />
+      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
       <Input
         type="search"
         value={value}
         onChange={(e) => setValue(e.target.value)}
         placeholder={placeholder}
-        className="pl-10 pr-4 py-2.5 h-auto rounded-xl border-primary/20 bg-surface text-text placeholder:text-text-muted"
+        className="pl-10 pr-4 py-2.5 h-auto rounded-xl border-primary/20 bg-card text-foreground placeholder:text-muted-foreground"
       />
     </form>
   );

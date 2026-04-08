@@ -66,7 +66,7 @@ export function TapToChord({ lyrics, chordMap, onChordMapChange }: TapToChordPro
                 <button
                   key={partIndex}
                   onClick={() => setActivePosition(posKey)}
-                  className="relative cursor-pointer hover:bg-secondary/20 rounded px-0.5 transition-colors"
+                  className="relative cursor-pointer hover:bg-secondary/20 rounded px-0.5 transition-colors min-h-[44px]"
                   style={{ paddingTop: "1.4em" }}
                 >
                   {chord && (

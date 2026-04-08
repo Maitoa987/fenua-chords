@@ -2,7 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import type { Style } from "@/types/database";
 
 const styleVariants: Record<Style, string> = {
-  bringue: "bg-cta/15 text-cta hover:bg-cta/15",
+  bringue: "bg-accent/15 text-accent hover:bg-accent/15",
   himene: "bg-primary/15 text-primary hover:bg-primary/15",
   variete: "bg-purple-100 text-purple-700 hover:bg-purple-100",
   traditionnel: "bg-amber-100 text-amber-700 hover:bg-amber-100",

@@ -135,7 +135,7 @@ export default function EditChordSheetPage({ params }: PageProps) {
   if (loading) {
     return (
       <main className="max-w-2xl mx-auto px-4 py-8">
-        <p className="text-text-muted">Chargement...</p>
+        <p className="text-muted-foreground">Chargement...</p>
       </main>
     )
   }
@@ -144,7 +144,7 @@ export default function EditChordSheetPage({ params }: PageProps) {
     return (
       <main className="max-w-2xl mx-auto px-4 py-8 text-center space-y-4">
         <h1 className="text-2xl font-bold">Fiche introuvable</h1>
-        <p className="text-text-muted">Cette fiche d&apos;accords n&apos;existe pas.</p>
+        <p className="text-muted-foreground">Cette fiche d&apos;accords n&apos;existe pas.</p>
         <button onClick={() => router.back()} className="text-primary underline cursor-pointer">
           Retour
         </button>
@@ -156,7 +156,7 @@ export default function EditChordSheetPage({ params }: PageProps) {
     return (
       <main className="max-w-2xl mx-auto px-4 py-8 text-center space-y-4">
         <h1 className="text-2xl font-bold">Accès refusé</h1>
-        <p className="text-text-muted">Vous ne pouvez modifier que vos propres fiches d&apos;accords.</p>
+        <p className="text-muted-foreground">Vous ne pouvez modifier que vos propres fiches d&apos;accords.</p>
         <button onClick={() => router.back()} className="text-primary underline cursor-pointer">
           Retour
         </button>
@@ -169,7 +169,7 @@ export default function EditChordSheetPage({ params }: PageProps) {
       <div>
         <h1 className="text-3xl font-bold mb-1">Modifier la fiche</h1>
         {sheet && (
-          <p className="text-text-muted">{sheet.songs.title}</p>
+          <p className="text-muted-foreground">{sheet.songs.title}</p>
         )}
       </div>
 
@@ -248,7 +248,7 @@ export default function EditChordSheetPage({ params }: PageProps) {
         size="lg"
         onClick={handleSave}
         disabled={saving || !content.trim()}
-        className="w-full bg-cta hover:bg-cta/90 text-white"
+        className="w-full bg-accent hover:bg-accent/90 text-white"
       >
         {saving ? "Sauvegarde..." : "Sauvegarder les modifications"}
       </Button>

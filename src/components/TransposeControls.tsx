@@ -16,11 +16,11 @@ export function TransposeControls({ semitones, onChange, originalKey }: Transpos
   return (
     <div className="flex items-center gap-3">
       <span className="text-sm text-muted-foreground">Transposer</span>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 touch-manipulation">
         <Button
           variant="outline"
           size="icon"
-          className="h-8 w-8"
+          className="h-10 w-10"
           onClick={() => onChange(semitones - 1)}
           aria-label="Baisser d'un demi-ton"
         >
@@ -32,7 +32,7 @@ export function TransposeControls({ semitones, onChange, originalKey }: Transpos
         <Button
           variant="outline"
           size="icon"
-          className="h-8 w-8"
+          className="h-10 w-10"
           onClick={() => onChange(semitones + 1)}
           aria-label="Monter d'un demi-ton"
         >

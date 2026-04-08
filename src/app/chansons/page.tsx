@@ -55,7 +55,7 @@ export default async function ChansonPage({ searchParams }: Props) {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-10">
-      <h1 className="font-heading text-3xl text-text mb-6">Chansons</h1>
+      <h1 className="font-heading text-3xl text-foreground mb-6">Chansons</h1>
 
       <Suspense>
         <SearchBar />
@@ -69,7 +69,7 @@ export default async function ChansonPage({ searchParams }: Props) {
             className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all border ${
               activeStyle === value
                 ? "bg-primary text-white border-primary"
-                : "bg-surface text-text-muted border-primary/20 hover:border-primary/40"
+                : "bg-card text-muted-foreground border-primary/20 hover:border-primary/40"
             }`}
           >
             {label}
@@ -78,7 +78,7 @@ export default async function ChansonPage({ searchParams }: Props) {
       </div>
 
       {!songs || songs.length === 0 ? (
-        <p className="text-text-muted">Aucune chanson trouvee.</p>
+        <p className="text-muted-foreground">Aucune chanson trouvee.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {songs.map((song) => {

@@ -82,7 +82,7 @@ export function SongForm({ data, onChange }: SongFormProps) {
           value={data.artist}
           onChange={(v) => onChange({ ...data, artist: v })}
         />
-        <p className="text-xs text-text-muted mt-1">
+        <p className="text-xs text-muted-foreground mt-1">
           Si l&apos;artiste n&apos;existe pas encore, il sera créé automatiquement.
         </p>
       </div>

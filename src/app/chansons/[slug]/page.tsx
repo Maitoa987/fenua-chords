@@ -89,7 +89,7 @@ export default async function SongDetailPage({ params }: Props) {
       {/* Back link */}
       <Link
         href="/chansons"
-        className="inline-flex items-center gap-1.5 text-sm text-text-muted hover:text-text mb-8 transition-colors"
+        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-8 transition-colors"
       >
         <ArrowLeft className="w-4 h-4" />
         Toutes les chansons
@@ -100,18 +100,18 @@ export default async function SongDetailPage({ params }: Props) {
         <div className="flex flex-wrap items-center gap-3 mb-2">
           <StyleBadge style={song.style as Style} />
           {song.original_key && (
-            <span className="text-sm text-text-muted font-mono">
-              Tonalite : <span className="font-semibold text-text">{song.original_key}</span>
+            <span className="text-sm text-muted-foreground font-mono">
+              Tonalite : <span className="font-semibold text-foreground">{song.original_key}</span>
             </span>
           )}
           {song.bpm && (
-            <span className="text-sm text-text-muted">
-              BPM : <span className="font-semibold text-text">{song.bpm}</span>
+            <span className="text-sm text-muted-foreground">
+              BPM : <span className="font-semibold text-foreground">{song.bpm}</span>
             </span>
           )}
         </div>
 
-        <h1 className="font-heading text-3xl text-text">{song.title}</h1>
+        <h1 className="font-heading text-3xl text-foreground">{song.title}</h1>
 
         {artist && (
           <Link

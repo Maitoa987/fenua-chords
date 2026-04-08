@@ -33,9 +33,9 @@ export default async function HomePage() {
   return (
     <main className="flex-1">
       {/* Hero */}
-      <section className="bg-gradient-to-b from-primary/10 to-bg py-20 px-4 text-center">
-        <h1 className="font-heading text-5xl sm:text-6xl text-text mb-4">Fenua Chords</h1>
-        <p className="text-lg text-text-muted max-w-xl mx-auto mb-8">
+      <section className="bg-gradient-to-b from-primary/10 to-background py-20 px-4 text-center">
+        <h1 className="font-heading text-5xl sm:text-6xl text-foreground mb-4">Fenua Chords</h1>
+        <p className="text-lg text-muted-foreground max-w-xl mx-auto mb-8">
           Retrouve les accords de tes chants polynesiens preferes, partages par la communaute.
         </p>
         <div className="flex flex-wrap gap-3 justify-center">
@@ -60,21 +60,21 @@ export default async function HomePage() {
           <Card>
             <CardContent className="p-6 text-center">
               <Music className="w-8 h-8 text-primary mx-auto mb-3" />
-              <p className="font-heading text-4xl text-text">{songCount ?? 0}</p>
+              <p className="font-heading text-4xl text-foreground">{songCount ?? 0}</p>
               <p className="text-muted-foreground mt-1">Chansons</p>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-6 text-center">
               <Guitar className="w-8 h-8 text-primary mx-auto mb-3" />
-              <p className="font-heading text-4xl text-text">{artistCount ?? 0}</p>
+              <p className="font-heading text-4xl text-foreground">{artistCount ?? 0}</p>
               <p className="text-muted-foreground mt-1">Artistes</p>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-6 text-center">
               <Users className="w-8 h-8 text-primary mx-auto mb-3" />
-              <p className="font-heading text-4xl text-text">{contributorCount ?? 0}</p>
+              <p className="font-heading text-4xl text-foreground">{contributorCount ?? 0}</p>
               <p className="text-muted-foreground mt-1">Contributeurs</p>
             </CardContent>
           </Card>
@@ -83,7 +83,7 @@ export default async function HomePage() {
 
       {/* Styles */}
       <section className="max-w-5xl mx-auto px-4 pb-12">
-        <h2 className="font-heading text-2xl text-text mb-4">Explorer par style</h2>
+        <h2 className="font-heading text-2xl text-foreground mb-4">Explorer par style</h2>
         <div className="flex flex-wrap gap-3">
           {STYLES.map((style) => (
             <Link key={style} href={`/chansons?style=${style}`}>
@@ -96,7 +96,7 @@ export default async function HomePage() {
       {/* Recent Songs */}
       <section className="max-w-5xl mx-auto px-4 pb-16">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="font-heading text-2xl text-text">Ajouts recents</h2>
+          <h2 className="font-heading text-2xl text-foreground">Ajouts recents</h2>
           <Link href="/chansons" className="text-sm text-primary hover:underline">
             Voir toutes les chansons
           </Link>

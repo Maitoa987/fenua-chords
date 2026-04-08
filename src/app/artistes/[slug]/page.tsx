@@ -54,25 +54,25 @@ export default async function ArtistDetailPage({ params }: Props) {
     <div className="max-w-5xl mx-auto px-4 py-10">
       <Link
         href="/artistes"
-        className="inline-flex items-center gap-1.5 text-sm text-text-muted hover:text-text mb-8 transition-colors"
+        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-8 transition-colors"
       >
         <ArrowLeft className="w-4 h-4" />
         Tous les artistes
       </Link>
 
       <div className="mb-8">
-        <h1 className="font-heading text-3xl text-text">{artist.name}</h1>
+        <h1 className="font-heading text-3xl text-foreground">{artist.name}</h1>
         {artist.origin && (
-          <p className="text-text-muted mt-1">{artist.origin}</p>
+          <p className="text-muted-foreground mt-1">{artist.origin}</p>
         )}
         {artist.bio && (
-          <p className="text-text-muted mt-4 max-w-2xl">{artist.bio}</p>
+          <p className="text-muted-foreground mt-4 max-w-2xl">{artist.bio}</p>
         )}
       </div>
 
-      <h2 className="font-heading text-xl text-text mb-4">Chansons</h2>
+      <h2 className="font-heading text-xl text-foreground mb-4">Chansons</h2>
       {!songs || songs.length === 0 ? (
-        <p className="text-text-muted">Aucune chanson publiée pour le moment.</p>
+        <p className="text-muted-foreground">Aucune chanson publiée pour le moment.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {songs.map((song) => (

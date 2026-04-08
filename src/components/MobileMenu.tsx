@@ -10,7 +10,7 @@ interface MobileMenuProps {
 
 export function MobileMenu({ onClose, user, onLogout }: MobileMenuProps) {
   return (
-    <nav className="md:hidden border-t border-primary/10 bg-surface p-4 space-y-3">
+    <nav className="md:hidden border-t border-border bg-card p-4 space-y-3">
       <Link
         href="/artistes"
         onClick={onClose}
@@ -28,7 +28,7 @@ export function MobileMenu({ onClose, user, onLogout }: MobileMenuProps) {
       <Link
         href="/contribuer"
         onClick={onClose}
-        className={buttonVariants({ variant: "default", className: "w-full bg-cta hover:bg-cta/90 text-white" })}
+        className={buttonVariants({ variant: "default", className: "w-full bg-accent hover:bg-accent/90 text-white" })}
       >
         Contribuer
       </Link>
