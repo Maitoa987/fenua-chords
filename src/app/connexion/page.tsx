@@ -2,9 +2,9 @@
 
 export const dynamic = "force-dynamic";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Mail, Lock, ArrowLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { Input } from "@/components/ui/input";
@@ -16,8 +16,10 @@ import { TurnstileWidget } from "@/components/TurnstileWidget";
 
 type Mode = "login" | "signup" | "magic-link";
 
-export default function ConnexionPage() {
+function ConnexionForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const nextUrl = searchParams.get("next") ?? "/";
   const [mode, setMode] = useState<Mode>("login");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -56,14 +58,14 @@ export default function ConnexionPage() {
       if (error) {
         setError(error.message);
       } else {
-        router.push("/");
+        router.push(nextUrl);
       }
     } else if (mode === "signup") {
       const { error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/callback`,
+          emailRedirectTo: `${window.location.origin}/callback?next=${encodeURIComponent(nextUrl)}`,
           data: { username },
         },
       });
@@ -76,7 +78,7 @@ export default function ConnexionPage() {
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
-          emailRedirectTo: `${window.location.origin}/callback`,
+          emailRedirectTo: `${window.location.origin}/callback?next=${encodeURIComponent(nextUrl)}`,
         },
       });
       if (error) {
@@ -224,5 +226,13 @@ export default function ConnexionPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ConnexionPage() {
+  return (
+    <Suspense>
+      <ConnexionForm />
+    </Suspense>
   );
 }
