@@ -25,7 +25,7 @@ export default async function MesContributionsPage() {
 
   const { data: songs } = await supabase
     .from('songs')
-    .select('id, title, slug, style, created_at, artists(name), chord_sheets(id, instrument, contributed_by)')
+    .select('id, title, slug, style, created_at, song_artists(artists(name)), chord_sheets(id, instrument, contributed_by)')
     .eq('created_by', user.id)
     .order('created_at', { ascending: false })
 
@@ -35,7 +35,7 @@ export default async function MesContributionsPage() {
     slug: string
     style: string
     created_at: string
-    artists: { name: string } | null
+    song_artists: { artists: { name: string } }[]
     chord_sheets: { id: string; instrument: string; contributed_by: string }[]
   }
 
@@ -91,9 +91,9 @@ export default async function MesContributionsPage() {
                     >
                       {song.title}
                     </Link>
-                    {song.artists?.name && (
+                    {song.song_artists.length > 0 && (
                       <span className="text-sm text-muted-foreground">
-                        — {song.artists.name}
+                        — {song.song_artists.map((sa) => sa.artists.name).join(", ")}
                       </span>
                     )}
                     <StyleBadge style={song.style as Style} />
