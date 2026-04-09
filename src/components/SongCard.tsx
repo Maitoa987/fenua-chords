@@ -9,12 +9,12 @@ interface SongCardProps {
   songId: string;
   title: string;
   slug: string;
-  artistName: string;
+  artistNames: string[];
   style: Style;
   originalKey: string | null;
 }
 
-export function SongCard({ songId, title, slug, artistName, style, originalKey }: SongCardProps) {
+export function SongCard({ songId, title, slug, artistNames, style, originalKey }: SongCardProps) {
   return (
     <Card className="hover:border-primary/30 hover:shadow-md transition-all duration-200">
       <CardContent className="p-5">
@@ -22,7 +22,7 @@ export function SongCard({ songId, title, slug, artistName, style, originalKey }
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
               <h3 className="font-heading text-lg truncate">{title}</h3>
-              <p className="text-sm text-muted-foreground">{artistName}</p>
+              <p className="text-sm text-muted-foreground">{artistNames.join(", ")}</p>
             </div>
             <div className="flex items-center gap-2 flex-shrink-0">
               {originalKey && <span className="text-xs font-mono text-muted-foreground bg-muted px-2 py-0.5 rounded">{originalKey}</span>}
