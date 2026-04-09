@@ -31,7 +31,7 @@ export function DeleteMySheetButton({ sheetId }: DeleteMySheetButtonProps) {
     <Button
       variant="ghost"
       size="sm"
-      className="text-destructive hover:text-destructive hover:bg-destructive/10 h-7 px-2"
+      className="text-destructive hover:text-destructive hover:bg-destructive/10"
       onClick={handleDelete}
     >
       <Trash2 className="w-3.5 h-3.5" />

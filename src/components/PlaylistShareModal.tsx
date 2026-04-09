@@ -108,7 +108,9 @@ export function PlaylistShareModal({ open, onOpenChange, playlistId, shareToken,
         {canShare ? (
           <div className="space-y-4 mt-4">
             <div ref={qrRef} className="flex justify-center">
-              <QRCodeSVG value={shareUrl} size={200} level="M" />
+              <div className="w-full max-w-[200px] mx-auto">
+                <QRCodeSVG value={shareUrl} size={200} level="M" className="w-full h-auto" />
+              </div>
             </div>
 
             <div className="flex gap-2">

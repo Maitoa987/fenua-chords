@@ -33,6 +33,7 @@ export function SearchBar({ placeholder = "Rechercher une chanson ou un artiste.
         value={value}
         onChange={(e) => setValue(e.target.value)}
         placeholder={placeholder}
+        aria-label="Rechercher un chant ou artiste"
         className="pl-10 pr-4 py-2.5 h-auto rounded-xl border-primary/20 bg-card text-foreground placeholder:text-muted-foreground"
       />
     </form>
