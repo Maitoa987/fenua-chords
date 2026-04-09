@@ -152,6 +152,7 @@ export function SongReaderModal({ title, artistName, content, originalKey, onClo
           <button onClick={() => adjustFont(-1)} className="p-1.5 rounded hover:bg-muted text-xs font-bold" title="Réduire">
             A-
           </button>
+          <span className="text-[10px] text-muted-foreground w-6 text-center">{FONT_SIZES[fontSizeIndex]}</span>
           <button onClick={() => adjustFont(1)} className="p-1.5 rounded hover:bg-muted text-sm font-bold" title="Agrandir">
             A+
           </button>
@@ -191,9 +192,7 @@ export function SongReaderModal({ title, artistName, content, originalKey, onClo
           <button onClick={() => adjustSpeed(1)} className="p-1.5 rounded hover:bg-muted" title="Accélérer">
             <ChevronsDown className="w-3.5 h-3.5" />
           </button>
-          {scrolling && (
-            <span className="text-[10px] text-muted-foreground ml-0.5">{SPEED_LABELS[speedIndex]}</span>
-          )}
+          <span className="text-[10px] text-muted-foreground ml-0.5 w-14">{SPEED_LABELS[speedIndex]}</span>
 
           <span className="w-px h-4 bg-border mx-1" />
 
@@ -207,7 +206,7 @@ export function SongReaderModal({ title, artistName, content, originalKey, onClo
       <div className="flex-1 overflow-y-auto" ref={scrollContainerRef}>
         <div className="max-w-3xl mx-auto px-4 py-6">
           <div style={{ fontSize: `${FONT_SIZES[fontSizeIndex]}px` }}>
-            <ChordRenderer content={transposedContent} />
+            <ChordRenderer content={transposedContent} className="font-mono leading-relaxed whitespace-pre-wrap" />
           </div>
         </div>
       </div>

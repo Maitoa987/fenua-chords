@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { X, ChevronLeft, ChevronRight, Minus, Plus, Play, Pause, ChevronsDown } from 'lucide-react'
 import { ChordRenderer } from '@/components/ChordRenderer'
-import { transposeChordPro } from '@/lib/transpose'
+import { transposeChordPro, getTransposedKey, getSemitonesBetween, getAllKeys } from '@/lib/transpose'
 import { usePlaylist } from '@/lib/playlist-context'
 
 const SPEED_LABELS = ['Tres lent', 'Lent', 'Normal', 'Rapide', 'Tres rapide']
@@ -210,9 +210,10 @@ export function PlaylistReaderClient({ playlistTitle, shareToken, playlistId, so
 
         <div className="flex items-center gap-1">
           {/* Font size */}
-          <button onClick={() => adjustFont(-1)} className="p-1.5 rounded hover:bg-muted text-xs font-bold" title="Reduire">
+          <button onClick={() => adjustFont(-1)} className="p-1.5 rounded hover:bg-muted text-xs font-bold" title="Réduire">
             A-
           </button>
+          <span className="text-[10px] text-muted-foreground w-6 text-center">{FONT_SIZES[fontSizeIndex]}</span>
           <button onClick={() => adjustFont(1)} className="p-1.5 rounded hover:bg-muted text-sm font-bold" title="Agrandir">
             A+
           </button>
@@ -220,15 +221,39 @@ export function PlaylistReaderClient({ playlistTitle, shareToken, playlistId, so
           <span className="w-px h-4 bg-border mx-1" />
 
           {/* Transpose */}
-          <button onClick={() => setSemitones((s) => s - 1)} className="p-1.5 rounded hover:bg-muted">
-            <Minus className="w-3.5 h-3.5" />
-          </button>
-          <span className="text-xs font-mono w-6 text-center">
-            {semitones > 0 ? `+${semitones}` : semitones}
-          </span>
-          <button onClick={() => setSemitones((s) => s + 1)} className="p-1.5 rounded hover:bg-muted">
-            <Plus className="w-3.5 h-3.5" />
-          </button>
+          {song.originalKey ? (
+            <>
+              <select
+                value={getTransposedKey(song.originalKey, semitones)}
+                onChange={(e) => {
+                  const delta = getSemitonesBetween(song.originalKey!, e.target.value)
+                  setSemitones(delta)
+                }}
+                className="h-7 min-w-[80px] rounded border border-input bg-background px-1.5 text-xs font-semibold text-chord touch-manipulation focus:outline-none focus:ring-1 focus:ring-ring"
+              >
+                {getAllKeys(song.originalKey).map((key) => (
+                  <option key={key} value={key}>
+                    {key}{key === song.originalKey ? ' ●' : ''}
+                  </option>
+                ))}
+              </select>
+            </>
+          ) : (
+            <>
+              <button onClick={() => setSemitones((s) => s - 1)} className="p-1.5 rounded hover:bg-muted touch-manipulation" aria-label="Baisser d'un demi-ton">
+                <Minus className="w-3.5 h-3.5" />
+              </button>
+              <span
+                className="text-xs font-mono w-8 text-center"
+                title={semitones === 0 ? 'Tonalite originale' : `${Math.abs(semitones)} demi-ton${Math.abs(semitones) > 1 ? 's' : ''} plus ${semitones > 0 ? 'haut' : 'bas'}`}
+              >
+                {semitones === 0 ? '0' : `${Math.abs(semitones)} ${semitones > 0 ? '↑' : '↓'}`}
+              </span>
+              <button onClick={() => setSemitones((s) => s + 1)} className="p-1.5 rounded hover:bg-muted touch-manipulation" aria-label="Monter d'un demi-ton">
+                <Plus className="w-3.5 h-3.5" />
+              </button>
+            </>
+          )}
 
           <span className="w-px h-4 bg-border mx-1" />
 
@@ -243,12 +268,10 @@ export function PlaylistReaderClient({ playlistTitle, shareToken, playlistId, so
           >
             {scrolling ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
           </button>
-          <button onClick={() => adjustSpeed(1)} className="p-1.5 rounded hover:bg-muted" title="Accelerer">
+          <button onClick={() => adjustSpeed(1)} className="p-1.5 rounded hover:bg-muted" title="Accélérer">
             <ChevronsDown className="w-3.5 h-3.5" />
           </button>
-          {scrolling && (
-            <span className="text-[10px] text-muted-foreground ml-0.5">{SPEED_LABELS[speedIndex]}</span>
-          )}
+          <span className="text-[10px] text-muted-foreground ml-0.5 w-14">{SPEED_LABELS[speedIndex]}</span>
 
           <span className="w-px h-4 bg-border mx-1" />
 
@@ -268,7 +291,7 @@ export function PlaylistReaderClient({ playlistTitle, shareToken, playlistId, so
 
           {content ? (
             <div style={{ fontSize: `${FONT_SIZES[fontSizeIndex]}px` }}>
-              <ChordRenderer content={content} />
+              <ChordRenderer content={content} className="font-mono leading-relaxed whitespace-pre-wrap" />
             </div>
           ) : (
             <p className="text-center text-muted-foreground py-12">
