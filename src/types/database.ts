@@ -57,11 +57,13 @@ export interface ChordSheet {
 
 export interface Playlist {
   id: string
-  title: string
   owner_id: string
+  title: string
+  description: string | null
   visibility: Visibility
-  share_token: string | null
+  share_token: string
   created_at: string
+  updated_at: string
 }
 
 export interface PlaylistSong {
@@ -69,6 +71,14 @@ export interface PlaylistSong {
   playlist_id: string
   song_id: string
   position: number
+  added_at: string
+}
+
+export interface PlaylistFollow {
+  id: string
+  follower_id: string
+  playlist_id: string
+  followed_at: string
 }
 
 export interface ChordVote {
