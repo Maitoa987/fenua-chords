@@ -8,7 +8,7 @@ export default async function AdminArtistesPage() {
 
   const { data: artists } = await supabase
     .from("artists")
-    .select("id, name, origin, slug, songs(count)")
+    .select("id, name, origin, slug, song_artists(count)")
     .order("name", { ascending: true })
 
   const artistsWithCount = (artists ?? []).map((a) => ({
@@ -16,7 +16,7 @@ export default async function AdminArtistesPage() {
     name: a.name,
     origin: a.origin as string | null,
     slug: a.slug,
-    songCount: Array.isArray(a.songs) ? (a.songs[0] as { count: number })?.count ?? 0 : 0,
+    songCount: Array.isArray(a.song_artists) ? (a.song_artists[0] as { count: number })?.count ?? 0 : 0,
   }))
 
   return (

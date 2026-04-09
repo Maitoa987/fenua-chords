@@ -9,7 +9,7 @@ interface SongRow {
   title: string
   style: Style
   created_at: string
-  artists: { name: string } | null
+  song_artists: { artists: { name: string } }[]
   profiles: { username: string } | null
   chord_sheets: { id: string; instrument: Instrument }[]
 }
@@ -24,7 +24,7 @@ export default async function AdminContenuPage() {
       title,
       style,
       created_at,
-      artists(name),
+      song_artists(artists(name)),
       profiles:created_by(username),
       chord_sheets(id, instrument)
     `)
@@ -48,7 +48,7 @@ export default async function AdminContenuPage() {
       <div className="space-y-3">
         {rows.length > 0 ? (
           rows.map((song) => {
-            const artist = Array.isArray(song.artists) ? song.artists[0] : song.artists
+            const artistNames = song.song_artists.map((sa) => sa.artists.name).join(", ")
             const profile = Array.isArray(song.profiles) ? song.profiles[0] : song.profiles
             const sheets = Array.isArray(song.chord_sheets) ? song.chord_sheets : []
 
@@ -64,7 +64,7 @@ export default async function AdminContenuPage() {
                       </Badge>
                     </div>
                     <p className="text-xs text-muted-foreground mt-0.5">
-                      {artist?.name ?? "—"} · par {profile?.username ?? "inconnu"} ·{" "}
+                      {artistNames || "—"} · par {profile?.username ?? "inconnu"} ·{" "}
                       {new Date(song.created_at).toLocaleDateString("fr-FR")}
                     </p>
                   </div>
