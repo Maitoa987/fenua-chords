@@ -14,7 +14,7 @@ import {
 
 export interface SongFormData {
   title: string
-  artist: ArtistValue | null
+  artists: ArtistValue[]
   style: Style
   instrument: Instrument
   originalKey: string
@@ -75,15 +75,15 @@ export function SongForm({ data, onChange }: SongFormProps) {
         />
       </div>
 
-      {/* Artist — span 2 */}
+      {/* Artists — span 2 */}
       <div className="sm:col-span-2 space-y-1">
-        <Label>Artiste <span className="text-destructive">*</span></Label>
+        <Label>Artiste(s) <span className="text-destructive">*</span></Label>
         <ArtistAutocomplete
-          value={data.artist}
-          onChange={(v) => onChange({ ...data, artist: v })}
+          value={data.artists}
+          onChange={(v) => onChange({ ...data, artists: v })}
         />
         <p className="text-xs text-muted-foreground mt-1">
-          Si l&apos;artiste n&apos;existe pas encore, il sera créé automatiquement.
+          Si un artiste n&apos;existe pas encore, il sera cree automatiquement.
         </p>
       </div>
 
