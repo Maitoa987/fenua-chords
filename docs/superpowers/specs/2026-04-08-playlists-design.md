@@ -66,12 +66,12 @@ L'URL publique utilise le `share_token` (pas l'UUID interne) pour le partage et 
 | Composant | Rôle |
 |-----------|------|
 | `PlaylistManager` | Page `/playlists` — CRUD playlist, drag & drop réordonnancement, liste des chants |
-| `PlaylistPublicView` | Page `/playlists/[token]` — vue partagée, boutons Copier/Suivre/Lecture |
-| `PlaylistReader` | Mode lecture plein écran — accords, transposition, auto-scroll, nav prev/next |
+| `PlaylistPublicClient` | Page `/playlists/[token]` — vue partagée, boutons Copier/Suivre/Lecture |
+| `PlaylistReaderClient` | Mode lecture plein écran — accords, transposition, auto-scroll, nav prev/next |
 | `PlaylistMiniBar` | Barre sticky bottom (style Spotify) — visible sur toutes les pages quand playlist active |
 | `AddToPlaylistButton` | Bouton contextuel sur pages chanson (`/chansons/[slug]`) et catalogue (`/chansons`) |
 | `PlaylistShareModal` | Modal avec QR code + lien + sélecteur visibilité |
-| `PlaylistQuotaBanner` | Banner "Bientôt disponible — playlists illimitées" |
+| ~~`PlaylistQuotaBanner`~~ | *(non implémenté dans le MVP — prévu futur)* |
 
 ## Gestion d'état — Playlist active
 

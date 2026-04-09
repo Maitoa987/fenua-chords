@@ -13,23 +13,37 @@ Plateforme web communautaire pour partager les accords de chants polynesiens.
 
 ```
 src/
-  app/           # App Router pages et layouts
-  components/    # Composants React reutilisables
-  lib/           # Utilitaires, clients, helpers
-    supabase/    # Client Supabase (server + browser)
-  types/         # Types TypeScript (DB, domain)
+  app/              # App Router pages et layouts
+    admin/          #   Panel admin (dashboard, users, contenu, artistes)
+    artistes/       #   Pages artistes (liste, detail)
+    chansons/       #   Pages chansons (catalogue, detail, edit)
+    connexion/      #   Auth (login magic link)
+    contribuer/     #   Formulaire contribution
+    mes-contributions/ # Contributions de l'utilisateur
+    playlists/      #   Playlist perso, vue partagee, mode lecture
+    profil/         #   Page profil utilisateur
+    api/            #   API routes (admin, verify-turnstile)
+  components/       # Composants React reutilisables
+    chord-editor/   #   Editeur d'accords (ChordPro, TapToChord)
+    ui/             #   Composants shadcn/ui
+  lib/              # Utilitaires, clients, helpers
+    supabase/       #   Client Supabase (server + browser)
+  types/            # Types TypeScript (DB, domain)
 ```
 
 ## Schema DB
 
 ```
-profiles, artists, songs, chord_sheets, playlists, playlist_songs, chord_votes, favorites
+profiles, artists, songs, chord_sheets, playlists, playlist_songs, playlist_follows, chord_votes, favorites
 ```
 
 Valeurs enum :
 - `style`: bringue | himene | variete | traditionnel | autre
 - `instrument`: guitare | ukulele | basse | ukulele-bass
 - `visibility`: private | link | public
+- `role`: user | admin
+- `song_status`: draft | published
+- `vote_value`: 1 | -1
 
 ## Regles
 
@@ -38,6 +52,10 @@ Valeurs enum :
 - SSR/ISR sur les fiches chansons (SEO)
 - Mobile-first
 - Pas de sur-ingenierie
+- Validation Zod sur tous les formulaires (contribute, edit)
+- Cloudflare Turnstile captcha sur signup et contribute
+- Rate limiting via Supabase RPC (10 songs/hour/user)
+- Systeme admin : role-based (admin guard), ban/unban utilisateurs
 
 ## Commandes
 
