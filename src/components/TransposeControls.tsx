@@ -1,7 +1,7 @@
 'use client'
 
 import { Minus, Plus } from 'lucide-react'
-import { getTransposedKey } from '@/lib/transpose'
+import { getTransposedKey, getSemitonesBetween, getAllKeys } from '@/lib/transpose'
 import { Button } from '@/components/ui/button'
 
 interface TransposeControlsProps {
@@ -11,7 +11,60 @@ interface TransposeControlsProps {
 }
 
 export function TransposeControls({ semitones, onChange, originalKey }: TransposeControlsProps) {
-  const transposedKey = originalKey ? getTransposedKey(originalKey, semitones) : null
+  if (originalKey) {
+    const keys = getAllKeys(originalKey)
+    const currentKey = getTransposedKey(originalKey, semitones)
+
+    return (
+      <div className="flex items-center gap-3">
+        <span className="text-sm text-muted-foreground">Tonalite :</span>
+        <div className="flex items-center gap-1.5 touch-manipulation">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8"
+            onClick={() => onChange(semitones - 1)}
+            aria-label="Baisser d'un demi-ton"
+          >
+            <Minus size={14} />
+          </Button>
+          <select
+            value={currentKey}
+            onChange={(e) => {
+              const delta = getSemitonesBetween(originalKey, e.target.value)
+              onChange(delta)
+            }}
+            className="h-10 min-w-[140px] rounded-md border border-input bg-background px-3 text-sm font-semibold text-chord touch-manipulation focus:outline-none focus:ring-2 focus:ring-ring"
+          >
+            {keys.map((key) => (
+              <option key={key} value={key}>
+                {key}{key === originalKey ? ' (Original)' : ''}
+              </option>
+            ))}
+          </select>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8"
+            onClick={() => onChange(semitones + 1)}
+            aria-label="Monter d'un demi-ton"
+          >
+            <Plus size={14} />
+          </Button>
+        </div>
+        <span className="text-sm text-muted-foreground">
+          Original : {originalKey}
+        </span>
+      </div>
+    )
+  }
+
+  // Fallback: no originalKey
+  const direction = semitones > 0 ? '↑' : semitones < 0 ? '↓' : ''
+  const display = semitones === 0 ? '0' : `${Math.abs(semitones)} ${direction}`
+  const tooltip = semitones === 0
+    ? 'Tonalite originale'
+    : `${Math.abs(semitones)} demi-ton${Math.abs(semitones) > 1 ? 's' : ''} plus ${semitones > 0 ? 'haut' : 'bas'}`
 
   return (
     <div className="flex items-center gap-3">
@@ -26,8 +79,11 @@ export function TransposeControls({ semitones, onChange, originalKey }: Transpos
         >
           <Minus size={14} />
         </Button>
-        <span className="w-8 text-center text-sm font-semibold tabular-nums">
-          {semitones > 0 ? `+${semitones}` : semitones}
+        <span
+          className="w-10 text-center text-sm font-semibold tabular-nums"
+          title={tooltip}
+        >
+          {display}
         </span>
         <Button
           variant="outline"
@@ -39,11 +95,6 @@ export function TransposeControls({ semitones, onChange, originalKey }: Transpos
           <Plus size={14} />
         </Button>
       </div>
-      {transposedKey && (
-        <span className="text-sm font-medium text-chord">
-          Tonalite : {transposedKey}
-        </span>
-      )}
     </div>
   )
 }
