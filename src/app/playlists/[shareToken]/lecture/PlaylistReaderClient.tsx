@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { X, ChevronLeft, ChevronRight, Minus, Plus, Play, Pause, ChevronsDown } from 'lucide-react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { ChordRenderer } from '@/components/ChordRenderer'
+import { ReaderToolbar } from '@/components/ReaderToolbar'
 import { transposeChordPro, getTransposedKey, getSemitonesBetween, getAllKeys } from '@/lib/transpose'
 import { usePlaylist } from '@/lib/playlist-context'
 
@@ -196,90 +197,24 @@ export function PlaylistReaderClient({ playlistTitle, shareToken, playlistId, so
   const content = song.sheet ? transposeChordPro(song.sheet.content, semitones) : null
 
   return (
-    <div className="fixed inset-0 z-50 bg-background flex flex-col overflow-hidden">
-      {/* Top bar */}
-      <div className="flex items-center justify-between gap-2 px-3 py-2 bg-card border-b border-border shrink-0 flex-wrap">
-        <div className="flex items-center gap-3 min-w-0">
-          <span className="text-xs text-muted-foreground whitespace-nowrap">
-            {currentIndex + 1}/{songs.length}
-          </span>
-          <span className="text-xs text-muted-foreground truncate hidden sm:inline">
-            {playlistTitle}
-          </span>
-        </div>
-
-        <div className="flex items-center gap-1">
-          {/* Font size */}
-          <button onClick={() => adjustFont(-1)} className="p-1.5 rounded hover:bg-muted text-xs font-bold" title="Réduire">
-            A-
-          </button>
-          <span className="text-[10px] text-muted-foreground w-6 text-center">{FONT_SIZES[fontSizeIndex]}</span>
-          <button onClick={() => adjustFont(1)} className="p-1.5 rounded hover:bg-muted text-sm font-bold" title="Agrandir">
-            A+
-          </button>
-
-          <span className="w-px h-4 bg-border mx-1" />
-
-          {/* Transpose */}
-          {song.originalKey ? (
-            <>
-              <select
-                value={getTransposedKey(song.originalKey, semitones)}
-                onChange={(e) => {
-                  const delta = getSemitonesBetween(song.originalKey!, e.target.value)
-                  setSemitones(delta)
-                }}
-                className="h-7 min-w-[80px] rounded border border-input bg-background px-1.5 text-xs font-semibold text-chord touch-manipulation focus:outline-none focus:ring-1 focus:ring-ring"
-              >
-                {getAllKeys(song.originalKey).map((key) => (
-                  <option key={key} value={key}>
-                    {key}{key === song.originalKey ? ' ●' : ''}
-                  </option>
-                ))}
-              </select>
-            </>
-          ) : (
-            <>
-              <button onClick={() => setSemitones((s) => s - 1)} className="p-1.5 rounded hover:bg-muted touch-manipulation" aria-label="Baisser d'un demi-ton">
-                <Minus className="w-3.5 h-3.5" />
-              </button>
-              <span
-                className="text-xs font-mono w-8 text-center"
-                title={semitones === 0 ? 'Tonalite originale' : `${Math.abs(semitones)} demi-ton${Math.abs(semitones) > 1 ? 's' : ''} plus ${semitones > 0 ? 'haut' : 'bas'}`}
-              >
-                {semitones === 0 ? '0' : `${Math.abs(semitones)} ${semitones > 0 ? '↑' : '↓'}`}
-              </span>
-              <button onClick={() => setSemitones((s) => s + 1)} className="p-1.5 rounded hover:bg-muted touch-manipulation" aria-label="Monter d'un demi-ton">
-                <Plus className="w-3.5 h-3.5" />
-              </button>
-            </>
-          )}
-
-          <span className="w-px h-4 bg-border mx-1" />
-
-          {/* Auto-scroll */}
-          <button onClick={() => adjustSpeed(-1)} className="p-1.5 rounded hover:bg-muted" title="Ralentir">
-            <ChevronsDown className="w-3.5 h-3.5 rotate-180" />
-          </button>
-          <button
-            onClick={() => setScrolling((s) => !s)}
-            className={`p-1.5 rounded ${scrolling ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'}`}
-            title={scrolling ? 'Pause auto-scroll' : 'Lancer auto-scroll'}
-          >
-            {scrolling ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
-          </button>
-          <button onClick={() => adjustSpeed(1)} className="p-1.5 rounded hover:bg-muted" title="Accélérer">
-            <ChevronsDown className="w-3.5 h-3.5" />
-          </button>
-          <span className="text-[10px] text-muted-foreground ml-0.5 w-14">{SPEED_LABELS[speedIndex]}</span>
-
-          <span className="w-px h-4 bg-border mx-1" />
-
-          <button onClick={handleClose} className="p-1.5 rounded hover:bg-muted" title="Quitter">
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-      </div>
+    <div className="fixed inset-0 z-50 bg-background flex flex-col overflow-hidden reader-safe-area">
+      <ReaderToolbar
+        title={song.title}
+        subtitle={song.artistName}
+        badge={`${currentIndex + 1}/${songs.length}`}
+        fontSizeIndex={fontSizeIndex}
+        fontSizes={FONT_SIZES}
+        onFontChange={adjustFont}
+        semitones={semitones}
+        onSemitonesChange={setSemitones}
+        originalKey={song.originalKey}
+        scrolling={scrolling}
+        onToggleScroll={() => setScrolling((s) => !s)}
+        speedIndex={speedIndex}
+        speedLabels={SPEED_LABELS}
+        onSpeedChange={adjustSpeed}
+        onClose={handleClose}
+      />
 
       {/* Song content */}
       <div className="flex-1 overflow-y-auto" ref={contentRef}>
@@ -306,7 +241,7 @@ export function PlaylistReaderClient({ playlistTitle, shareToken, playlistId, so
         <button
           onClick={handlePrev}
           disabled={currentIndex <= 0}
-          className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          className="flex items-center gap-1 min-h-[44px] text-sm text-muted-foreground hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
         >
           <ChevronLeft className="w-4 h-4" />
           <span className="hidden sm:inline truncate max-w-[120px]">
@@ -316,7 +251,7 @@ export function PlaylistReaderClient({ playlistTitle, shareToken, playlistId, so
         <button
           onClick={handleNext}
           disabled={currentIndex >= songs.length - 1}
-          className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          className="flex items-center gap-1 min-h-[44px] text-sm text-muted-foreground hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
         >
           <span className="hidden sm:inline truncate max-w-[120px]">
             {currentIndex < songs.length - 1 ? songs[currentIndex + 1].title : ''}

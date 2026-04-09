@@ -1,9 +1,9 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { X, Minus, Plus, Play, Pause, ChevronsDown } from 'lucide-react'
 import { ChordRenderer } from '@/components/ChordRenderer'
 import { transposeChordPro } from '@/lib/transpose'
+import { ReaderToolbar } from '@/components/ReaderToolbar'
 
 const SPEED_LABELS = ['Très lent', 'Lent', 'Normal', 'Rapide', 'Très rapide']
 const SPEED_VALUES = [0.3, 0.6, 1.0, 1.8, 3.0]
@@ -139,68 +139,23 @@ export function SongReaderModal({ title, artistName, content, originalKey, onClo
   const transposedContent = transposeChordPro(content, semitones)
 
   return (
-    <div className="fixed inset-0 z-50 bg-background flex flex-col overflow-hidden">
-      {/* Top bar */}
-      <div className="flex items-center justify-between gap-2 px-3 py-2 bg-card border-b border-border shrink-0 flex-wrap">
-        <div className="flex items-center gap-3 min-w-0">
-          <span className="text-sm font-medium truncate">{title}</span>
-          <span className="text-xs text-muted-foreground truncate hidden sm:inline">{artistName}</span>
-        </div>
-
-        <div className="flex items-center gap-1">
-          {/* Font size */}
-          <button onClick={() => adjustFont(-1)} className="p-1.5 rounded hover:bg-muted text-xs font-bold" title="Réduire">
-            A-
-          </button>
-          <span className="text-[10px] text-muted-foreground w-6 text-center">{FONT_SIZES[fontSizeIndex]}</span>
-          <button onClick={() => adjustFont(1)} className="p-1.5 rounded hover:bg-muted text-sm font-bold" title="Agrandir">
-            A+
-          </button>
-
-          <span className="w-px h-4 bg-border mx-1" />
-
-          {/* Transpose */}
-          <button onClick={() => setSemitones((s) => s - 1)} className="p-1.5 rounded hover:bg-muted">
-            <Minus className="w-3.5 h-3.5" />
-          </button>
-          <span className="text-xs font-mono w-6 text-center">
-            {semitones > 0 ? `+${semitones}` : semitones}
-          </span>
-          <button onClick={() => setSemitones((s) => s + 1)} className="p-1.5 rounded hover:bg-muted">
-            <Plus className="w-3.5 h-3.5" />
-          </button>
-
-          {originalKey && (
-            <span className="text-xs text-muted-foreground ml-1 hidden sm:inline">
-              {transposeChordPro(`[${originalKey}]`, semitones).replace(/[\[\]]/g, '')}
-            </span>
-          )}
-
-          <span className="w-px h-4 bg-border mx-1" />
-
-          {/* Auto-scroll */}
-          <button onClick={() => adjustSpeed(-1)} className="p-1.5 rounded hover:bg-muted" title="Ralentir">
-            <ChevronsDown className="w-3.5 h-3.5 rotate-180" />
-          </button>
-          <button
-            onClick={() => setScrolling((s) => !s)}
-            className={`p-1.5 rounded ${scrolling ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'}`}
-            title={scrolling ? 'Pause auto-scroll' : 'Lancer auto-scroll'}
-          >
-            {scrolling ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
-          </button>
-          <button onClick={() => adjustSpeed(1)} className="p-1.5 rounded hover:bg-muted" title="Accélérer">
-            <ChevronsDown className="w-3.5 h-3.5" />
-          </button>
-          <span className="text-[10px] text-muted-foreground ml-0.5 w-14">{SPEED_LABELS[speedIndex]}</span>
-
-          <span className="w-px h-4 bg-border mx-1" />
-
-          <button onClick={onClose} className="p-1.5 rounded hover:bg-muted" title="Quitter (Échap)">
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-      </div>
+    <div className="fixed inset-0 z-50 bg-background flex flex-col overflow-hidden reader-safe-area">
+      <ReaderToolbar
+        title={title}
+        subtitle={artistName}
+        fontSizeIndex={fontSizeIndex}
+        fontSizes={FONT_SIZES}
+        onFontChange={adjustFont}
+        semitones={semitones}
+        onSemitonesChange={setSemitones}
+        originalKey={originalKey}
+        scrolling={scrolling}
+        onToggleScroll={() => setScrolling((s) => !s)}
+        speedIndex={speedIndex}
+        speedLabels={SPEED_LABELS}
+        onSpeedChange={adjustSpeed}
+        onClose={onClose}
+      />
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto" ref={scrollContainerRef}>
