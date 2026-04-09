@@ -19,19 +19,26 @@ const STYLES: { value: Style | "tous"; label: string }[] = [
   { value: "autre", label: "Autre" },
 ];
 
+const SORTS: { value: string; label: string }[] = [
+  { value: "title", label: "A — Z" },
+  { value: "popular", label: "Les plus aimés" },
+  { value: "recent", label: "Récents" },
+];
+
 interface Props {
-  searchParams: Promise<{ q?: string; style?: string }>;
+  searchParams: Promise<{ q?: string; style?: string; sort?: string }>;
 }
 
 export default async function ChansonPage({ searchParams }: Props) {
-  const { q, style } = await searchParams;
+  const { q, style, sort } = await searchParams;
   const supabase = await createClient();
+
+  const { data: { user } } = await supabase.auth.getUser();
 
   let query = supabase
     .from("songs")
-    .select("id, title, slug, style, original_key, song_artists(artists(name))")
-    .eq("status", "published")
-    .order("title");
+    .select("id, title, slug, style, original_key, likes_count, song_artists(artists(name))")
+    .eq("status", "published");
 
   if (q) {
     query = query.ilike("title", `%${q}%`);
@@ -41,14 +48,35 @@ export default async function ChansonPage({ searchParams }: Props) {
     query = query.eq("style", style);
   }
 
+  // Tri
+  if (sort === "popular") {
+    query = query.order("likes_count", { ascending: false }).order("title");
+  } else if (sort === "recent") {
+    query = query.order("created_at", { ascending: false });
+  } else {
+    query = query.order("title");
+  }
+
   const { data: songs } = await query;
 
-  const activeStyle = style ?? "tous";
+  let likedSongIds: Set<string> = new Set();
+  if (user) {
+    const { data: likes } = await supabase
+      .from("likes")
+      .select("song_id")
+      .eq("user_id", user.id);
+    likedSongIds = new Set((likes ?? []).map((l) => l.song_id));
+  }
 
-  function buildFilterLink(styleValue: string) {
+  const activeStyle = style ?? "tous";
+  const activeSort = sort ?? "title";
+
+  function buildFilterLink(styleValue: string, sortValue?: string) {
     const params = new URLSearchParams();
     if (q) params.set("q", q);
     if (styleValue !== "tous") params.set("style", styleValue);
+    const s = sortValue ?? activeSort;
+    if (s !== "title") params.set("sort", s);
     const qs = params.toString();
     return `/chansons${qs ? `?${qs}` : ""}`;
   }
@@ -61,7 +89,7 @@ export default async function ChansonPage({ searchParams }: Props) {
         <SearchBar />
       </Suspense>
 
-      <div className="flex flex-wrap gap-2 mt-6 mb-8">
+      <div className="flex flex-wrap gap-2 mt-6 mb-4">
         {STYLES.map(({ value, label }) => (
           <Link
             key={value}
@@ -70,6 +98,23 @@ export default async function ChansonPage({ searchParams }: Props) {
               activeStyle === value
                 ? "bg-primary text-white border-primary"
                 : "bg-card text-muted-foreground border-primary/20 hover:border-primary/40"
+            }`}
+          >
+            {label}
+          </Link>
+        ))}
+      </div>
+
+      {/* Sort options */}
+      <div className="flex flex-wrap gap-2 mb-8">
+        {SORTS.map(({ value, label }) => (
+          <Link
+            key={value}
+            href={buildFilterLink(activeStyle, value)}
+            className={`px-3 py-1 rounded-full text-xs font-medium transition-all border ${
+              activeSort === value
+                ? "bg-foreground text-background border-foreground"
+                : "bg-card text-muted-foreground border-border hover:border-foreground/30"
             }`}
           >
             {label}
@@ -93,6 +138,8 @@ export default async function ChansonPage({ searchParams }: Props) {
                 artistNames={artistNames}
                 style={song.style as Style}
                 originalKey={song.original_key}
+                likesCount={(song as unknown as { likes_count: number }).likes_count ?? 0}
+                isLiked={likedSongIds.has(song.id)}
               />
             );
           })}
