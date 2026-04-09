@@ -40,6 +40,8 @@ interface SheetData {
   capo: number | null
   content: string
   contributed_by: string
+  updated_at: string
+  is_official: boolean
   songs: {
     slug: string
     title: string
@@ -74,11 +76,17 @@ export default function EditChordSheetPage({ params }: PageProps) {
 
       const { data, error: fetchError } = await supabase
         .from("chord_sheets")
-        .select("id, song_id, instrument, tuning, capo, content, contributed_by, songs(slug, title)")
+        .select("id, song_id, instrument, tuning, capo, content, contributed_by, updated_at, is_official, songs(slug, title)")
         .eq("id", id)
         .single()
 
       if (fetchError || !data) {
+        setNotFound(true)
+        setLoading(false)
+        return
+      }
+
+      if ((data as unknown as SheetData).is_official) {
         setNotFound(true)
         setLoading(false)
         return
@@ -113,6 +121,54 @@ export default function EditChordSheetPage({ params }: PageProps) {
       const { createClient } = await import("@/lib/supabase/client")
       const supabase = createClient()
 
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) {
+        router.push("/connexion")
+        return
+      }
+
+      // Rate limit check
+      const { data: canProceed } = await supabase.rpc("check_update_rate_limit", {
+        user_uuid: user.id,
+        max_per_hour: 30,
+      })
+
+      if (!canProceed) {
+        setError("Tu as atteint la limite de modifications (30/heure). Réessaie plus tard.")
+        setSaving(false)
+        return
+      }
+
+      // Optimistic locking: vérifier que personne n'a modifié entre-temps
+      const { data: current } = await supabase
+        .from("chord_sheets")
+        .select("updated_at")
+        .eq("id", id)
+        .single()
+
+      if (current && current.updated_at !== sheet.updated_at) {
+        setError("Cette grille a été modifiée par quelqu'un d'autre. Recharge la page pour voir les dernières modifications.")
+        setSaving(false)
+        return
+      }
+
+      // Sauvegarder la révision (snapshot avant modification)
+      const { error: revisionError } = await supabase
+        .from("chord_sheet_revisions")
+        .insert({
+          chord_sheet_id: id,
+          content: sheet.content,
+          instrument: sheet.instrument,
+          tuning: sheet.tuning,
+          capo: sheet.capo,
+          edited_by: user.id,
+        })
+
+      if (revisionError) {
+        throw new Error("Impossible de sauvegarder l'historique")
+      }
+
+      // Appliquer la modification
       const { error: updateError } = await supabase
         .from("chord_sheets")
         .update({
@@ -120,6 +176,8 @@ export default function EditChordSheetPage({ params }: PageProps) {
           capo: parsed.data.capo || null,
           tuning: parsed.data.tuning || null,
           content: parsed.data.content,
+          updated_at: new Date().toISOString(),
+          last_edited_by: user.id,
         })
         .eq("id", id)
 
