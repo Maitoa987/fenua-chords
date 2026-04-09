@@ -31,7 +31,7 @@ export default async function PlaylistReaderPage({ params }: Props) {
 
   const { data: songs } = await supabase
     .from('playlist_songs')
-    .select('id, song_id, position, songs(id, title, slug, style, original_key, artists(name), chord_sheets(id, instrument, content, capo, tuning, votes_up, votes_down, is_official))')
+    .select('id, song_id, position, songs(id, title, slug, style, original_key, song_artists(artists(name)), chord_sheets(id, instrument, content, capo, tuning, votes_up, votes_down, is_official))')
     .eq('playlist_id', playlist.id)
     .order('position')
 
@@ -42,7 +42,7 @@ export default async function PlaylistReaderPage({ params }: Props) {
       slug: string
       style: string
       original_key: string | null
-      artists: { name: string } | null
+      song_artists: { artists: { name: string } }[]
       chord_sheets: {
         id: string
         instrument: string
@@ -69,9 +69,7 @@ export default async function PlaylistReaderPage({ params }: Props) {
       title: song.title,
       slug: song.slug,
       originalKey: song.original_key,
-      artistName: Array.isArray(song.artists)
-        ? (song.artists[0] as { name: string })?.name ?? ''
-        : song.artists?.name ?? '',
+      artistName: song.song_artists?.map((sa) => sa.artists.name).join(', ') ?? '',
       sheet: bestSheet ? { id: bestSheet.id, content: bestSheet.content, instrument: bestSheet.instrument, capo: bestSheet.capo } : null,
     }
   })

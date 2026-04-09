@@ -47,7 +47,7 @@ export default async function PlaylistPublicPage({ params }: Props) {
 
   const { data: songs } = await supabase
     .from('playlist_songs')
-    .select('id, song_id, position, songs(id, title, slug, style, artists(name))')
+    .select('id, song_id, position, songs(id, title, slug, style, song_artists(artists(name)))')
     .eq('playlist_id', playlist.id)
     .order('position')
 
@@ -69,7 +69,7 @@ export default async function PlaylistPublicPage({ params }: Props) {
   const isOwner = user?.id === playlist.owner_id
 
   const songItems = (songs ?? []).map((s) => {
-    const song = s.songs as unknown as { id: string; title: string; slug: string; style: string; artists: { name: string } | null }
+    const song = s.songs as unknown as { id: string; title: string; slug: string; style: string; song_artists: { artists: { name: string } }[] }
     return {
       id: s.id,
       songId: s.song_id,
@@ -77,9 +77,7 @@ export default async function PlaylistPublicPage({ params }: Props) {
       title: song.title,
       slug: song.slug,
       style: song.style,
-      artistName: Array.isArray(song.artists)
-        ? (song.artists[0] as { name: string })?.name ?? ''
-        : song.artists?.name ?? '',
+      artistName: song.song_artists?.map((sa) => sa.artists.name).join(', ') ?? '',
     }
   })
 

@@ -22,13 +22,13 @@ export default async function PlaylistPage() {
     id: string
     song_id: string
     position: number
-    songs: { id: string; title: string; slug: string; style: string; artists: { name: string }[] } | null
+    songs: { id: string; title: string; slug: string; style: string; song_artists: { artists: { name: string } }[] } | null
   }[] = []
 
   if (playlist) {
     const { data } = await supabase
       .from('playlist_songs')
-      .select('id, song_id, position, songs(id, title, slug, style, artists(name))')
+      .select('id, song_id, position, songs(id, title, slug, style, song_artists(artists(name)))')
       .eq('playlist_id', playlist.id)
       .order('position')
 
@@ -71,7 +71,7 @@ export default async function PlaylistPage() {
             title: song?.title ?? '',
             slug: song?.slug ?? '',
             style: song?.style ?? 'autre',
-            artistName: song?.artists?.[0]?.name ?? '',
+            artistName: song?.song_artists?.map((sa: { artists: { name: string } }) => sa.artists.name).join(', ') ?? '',
           }
         })}
         followedPlaylists={followedPlaylists}
