@@ -3,6 +3,7 @@ import { Guitar } from "lucide-react";
 import { StyleBadge } from "./StyleBadge";
 import { Card, CardContent } from "@/components/ui/card";
 import { AddToPlaylistButton } from "@/components/AddToPlaylistButton";
+import { LikeButton } from "@/components/LikeButton";
 import type { Style } from "@/types/database";
 
 interface SongCardProps {
@@ -12,9 +13,11 @@ interface SongCardProps {
   artistNames: string[];
   style: Style;
   originalKey: string | null;
+  likesCount?: number;
+  isLiked?: boolean;
 }
 
-export function SongCard({ songId, title, slug, artistNames, style, originalKey }: SongCardProps) {
+export function SongCard({ songId, title, slug, artistNames, style, originalKey, likesCount = 0, isLiked = false }: SongCardProps) {
   return (
     <Card className="hover:border-primary/30 hover:shadow-md transition-all duration-200">
       <CardContent className="p-5">
@@ -32,7 +35,10 @@ export function SongCard({ songId, title, slug, artistNames, style, originalKey 
         </Link>
         <div className="mt-3 flex items-center justify-between">
           <StyleBadge style={style} />
-          <AddToPlaylistButton songId={songId} songTitle={title} variant="icon" />
+          <div className="flex items-center gap-1">
+            <LikeButton songId={songId} initialLikesCount={likesCount} initialIsLiked={isLiked} size="sm" />
+            <AddToPlaylistButton songId={songId} songTitle={title} variant="icon" />
+          </div>
         </div>
       </CardContent>
     </Card>
