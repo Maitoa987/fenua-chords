@@ -197,7 +197,7 @@ export default function ContribuerPage() {
   return (
     <main className="max-w-2xl mx-auto px-4 py-8 space-y-8">
       <div>
-        <h1 className="text-3xl font-bold mb-1">Contribuer</h1>
+        <h1 className="text-3xl font-bold mb-1">Ajouter un chant</h1>
         <p className="text-muted-foreground">Partagez les accords d&apos;une chanson polynésienne</p>
       </div>
 

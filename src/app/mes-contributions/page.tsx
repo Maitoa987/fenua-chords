@@ -51,7 +51,7 @@ export default async function MesContributionsPage() {
           className={buttonVariants({ variant: 'default', size: 'sm' })}
           style={{ backgroundColor: 'var(--color-primary)' }}
         >
-          Contribuer
+          Ajouter un chant
         </Link>
       </div>
 

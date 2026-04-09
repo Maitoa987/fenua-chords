@@ -49,7 +49,7 @@ export default async function HomePage() {
             href="/contribuer"
             className={cn(buttonVariants({ size: "lg", className: "bg-accent text-white hover:bg-accent/90" }))}
           >
-            Contribuer
+            Ajouter un chant
           </Link>
         </div>
       </section>

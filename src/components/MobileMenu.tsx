@@ -33,7 +33,7 @@ export function MobileMenu({ onClose, user, onLogout, isAdmin, username }: Mobil
         onClick={onClose}
         className={buttonVariants({ variant: "default", className: "w-full bg-accent hover:bg-accent/90 text-white" })}
       >
-        Contribuer
+        Ajouter un chant
       </Link>
       {user && (
         <>

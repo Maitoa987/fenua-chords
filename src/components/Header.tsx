@@ -75,7 +75,7 @@ export function Header() {
             href="/contribuer"
             className={buttonVariants({ variant: "default", className: "bg-accent hover:bg-accent/90 text-white" })}
           >
-            Contribuer
+            Ajouter un chant
           </Link>
           {user ? (
             <UserMenu username={username} isAdmin={isAdmin} onLogout={handleLogout} />

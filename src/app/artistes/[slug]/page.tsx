@@ -78,7 +78,7 @@ export default async function ArtistDetailPage({ params }: Props) {
             href="/contribuer"
             className="text-primary hover:underline font-medium"
           >
-            Contribuer les accords d&apos;une chanson de {artist.name}
+            Ajouter les accords d&apos;une chanson de {artist.name}
           </Link>
         </div>
       ) : (
