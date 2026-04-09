@@ -12,6 +12,12 @@ export function ChordRenderer({ content }: ChordRendererProps) {
       {lines.map((line, lineIndex) => {
         const hasChords = line.segments.some((seg) => seg.chord !== null)
 
+        // Empty line = visible blank line for spacing
+        const isEmpty = line.segments.length === 0 || (line.segments.length === 1 && !line.segments[0].chord && line.segments[0].text === '')
+        if (isEmpty) {
+          return <div key={lineIndex} className="h-4" />
+        }
+
         return (
           <div key={lineIndex} className="flex flex-wrap">
             {line.segments.map((seg, segIndex) => (
