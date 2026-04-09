@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { Edit, Maximize2, Plus } from 'lucide-react'
 import { ChordRenderer } from '@/components/ChordRenderer'
 import { AddToPlaylistButton } from '@/components/AddToPlaylistButton'
+import { LikeButton } from '@/components/LikeButton'
+import { FavoriteButton } from '@/components/FavoriteButton'
 import { SongReaderModal } from '@/components/SongReaderModal'
 import { TransposeControls } from '@/components/TransposeControls'
 import { Button } from '@/components/ui/button'
@@ -44,9 +46,12 @@ interface SongDetailClientProps {
   songTitle: string
   artistName: string
   songSlug: string
+  likesCount: number
+  isLiked: boolean
+  isFavorited: boolean
 }
 
-export function SongDetailClient({ sheets, originalKey, currentUserId, songId, songTitle, artistName, songSlug }: SongDetailClientProps) {
+export function SongDetailClient({ sheets, originalKey, currentUserId, songId, songTitle, artistName, songSlug, likesCount, isLiked, isFavorited }: SongDetailClientProps) {
   const [activeIndex, setActiveIndex] = useState(0)
   const [semitones, setSemitones] = useState(0)
   const [readerOpen, setReaderOpen] = useState(false)
@@ -130,6 +135,8 @@ export function SongDetailClient({ sheets, originalKey, currentUserId, songId, s
           <Maximize2 className="w-4 h-4 mr-1" />
           Mode lecteur
         </Button>
+        <LikeButton songId={songId} initialLikesCount={likesCount} initialIsLiked={isLiked} />
+        <FavoriteButton songId={songId} initialIsFavorited={isFavorited} />
         <AddToPlaylistButton songId={songId} songTitle={songTitle} />
         {currentUserId && (
           <Link href={`/chansons/${songSlug}/contribuer`}>

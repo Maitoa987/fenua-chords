@@ -54,7 +54,7 @@ export default async function SongDetailPage({ params }: Props) {
   const { data: song } = await supabase
     .from('songs')
     .select(
-      'id, title, slug, style, original_key, bpm, youtube_url, song_artists(artists(name, slug)), chord_sheets(id, instrument, tuning, capo, content, contributed_by, votes_up, votes_down, is_official, created_at, updated_at, last_edited_by, profiles:contributed_by(username), editor:last_edited_by(username))'
+      'id, title, slug, style, original_key, bpm, youtube_url, likes_count, song_artists(artists(name, slug)), chord_sheets(id, instrument, tuning, capo, content, contributed_by, votes_up, votes_down, is_official, created_at, updated_at, last_edited_by, profiles:contributed_by(username), editor:last_edited_by(username))'
     )
     .eq('slug', slug)
     .eq('status', 'published')
@@ -62,6 +62,18 @@ export default async function SongDetailPage({ params }: Props) {
 
   if (!song) {
     notFound()
+  }
+
+  // Fetch like/favorite state for current user
+  let isLiked = false
+  let isFavorited = false
+  if (user) {
+    const [likeResult, favResult] = await Promise.all([
+      supabase.from('likes').select('id').eq('user_id', user.id).eq('song_id', song.id).single(),
+      supabase.from('favorites').select('id').eq('user_id', user.id).eq('song_id', song.id).single(),
+    ])
+    isLiked = !!likeResult.data
+    isFavorited = !!favResult.data
   }
 
   const songArtists = (song.song_artists as unknown as { artists: { name: string; slug: string } }[]) ?? []
@@ -143,6 +155,9 @@ export default async function SongDetailPage({ params }: Props) {
         songTitle={song.title}
         artistName={artists.map((a) => a.name).join(', ')}
         songSlug={song.slug}
+        likesCount={(song as unknown as { likes_count: number }).likes_count ?? 0}
+        isLiked={isLiked}
+        isFavorited={isFavorited}
       />
 
       {/* YouTube link */}
