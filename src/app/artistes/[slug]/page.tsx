@@ -44,12 +44,15 @@ export default async function ArtistDetailPage({ params }: Props) {
     notFound();
   }
 
-  const { data: songs } = await supabase
-    .from("songs")
-    .select("id, title, slug, style, original_key")
+  const { data: songArtistRows } = await supabase
+    .from("song_artists")
+    .select("songs(id, title, slug, style, original_key, status)")
     .eq("artist_id", artist.id)
-    .eq("status", "published")
-    .order("title");
+
+  const songs = (songArtistRows ?? [])
+    .map((row) => (row as unknown as { songs: { id: string; title: string; slug: string; style: string; original_key: string | null; status: string } }).songs)
+    .filter((s) => s !== null && s.status === "published")
+    .sort((a, b) => a.title.localeCompare(b.title))
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-10">
@@ -97,7 +100,7 @@ export default async function ArtistDetailPage({ params }: Props) {
               songId={song.id}
               title={song.title}
               slug={song.slug}
-              artistName={artist.name}
+              artistNames={[artist.name]}
               style={song.style as Style}
               originalKey={song.original_key}
             />
