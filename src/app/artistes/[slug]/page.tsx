@@ -46,13 +46,24 @@ export default async function ArtistDetailPage({ params }: Props) {
 
   const { data: songArtistRows } = await supabase
     .from("song_artists")
-    .select("songs(id, title, slug, style, original_key, status)")
+    .select("songs(id, title, slug, style, original_key, likes_count, status)")
     .eq("artist_id", artist.id)
 
   const songs = (songArtistRows ?? [])
-    .map((row) => (row as unknown as { songs: { id: string; title: string; slug: string; style: string; original_key: string | null; status: string } }).songs)
+    .map((row) => (row as unknown as { songs: { id: string; title: string; slug: string; style: string; original_key: string | null; likes_count: number; status: string } }).songs)
     .filter((s) => s !== null && s.status === "published")
     .sort((a, b) => a.title.localeCompare(b.title))
+
+  const { data: { user } } = await supabase.auth.getUser()
+
+  let likedSongIds: Set<string> = new Set()
+  if (user) {
+    const { data: likes } = await supabase
+      .from('likes')
+      .select('song_id')
+      .eq('user_id', user.id)
+    likedSongIds = new Set((likes ?? []).map((l) => l.song_id))
+  }
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-10">
@@ -103,6 +114,8 @@ export default async function ArtistDetailPage({ params }: Props) {
               artistNames={[artist.name]}
               style={song.style as Style}
               originalKey={song.original_key}
+              likesCount={song.likes_count ?? 0}
+              isLiked={likedSongIds.has(song.id)}
             />
           ))}
         </div>
