@@ -13,7 +13,7 @@ import { TurnstileWidget } from "@/components/TurnstileWidget"
 
 const DEFAULT_FORM: SongFormData = {
   title: "",
-  artist: null,
+  artists: [],
   style: "bringue",
   instrument: "guitare",
   originalKey: "",
@@ -32,7 +32,7 @@ export default function ContribuerPage() {
 
   const canSubmit =
     formData.title.trim().length > 0 &&
-    formData.artist !== null &&
+    formData.artists.length > 0 &&
     content.trim().length > 0 &&
     !loading
 
@@ -43,8 +43,7 @@ export default function ContribuerPage() {
 
     const parsed = songSchema.safeParse({
       title: formData.title,
-      artistName: formData.artist?.name ?? "",
-      artistId: formData.artist?.id ?? null,
+      artists: formData.artists.map((a) => ({ id: a.id, name: a.name })),
       style: formData.style,
       instrument: formData.instrument,
       originalKey: formData.originalKey,
@@ -110,38 +109,41 @@ export default function ContribuerPage() {
         return
       }
 
-      // Find or create artist
-      if (!formData.artist) throw new Error("Artiste requis")
-      let artistId: string
+      // Resolve all artists
+      if (formData.artists.length === 0) throw new Error("Au moins un artiste requis")
+      const artistIds: string[] = []
 
-      if (formData.artist.id) {
-        artistId = formData.artist.id
-      } else {
-        const artistSlug = slugify(formData.artist.name)
-        const { data: existingArtist } = await supabase
-          .from("artists")
-          .select("id")
-          .eq("slug", artistSlug)
-          .single()
-
-        if (existingArtist) {
-          artistId = existingArtist.id
+      for (const artist of formData.artists) {
+        if (artist.id) {
+          artistIds.push(artist.id)
         } else {
-          const { data: newArtist, error: artistError } = await supabase
+          const artistSlug = slugify(artist.name)
+          const { data: existingArtist } = await supabase
             .from("artists")
-            .insert({ name: formData.artist.name, slug: artistSlug })
             .select("id")
+            .eq("slug", artistSlug)
             .single()
 
-          if (artistError || !newArtist) {
-            throw new Error("Impossible de créer l'artiste")
+          if (existingArtist) {
+            artistIds.push(existingArtist.id)
+          } else {
+            const { data: newArtist, error: artistError } = await supabase
+              .from("artists")
+              .insert({ name: artist.name, slug: artistSlug })
+              .select("id")
+              .single()
+
+            if (artistError || !newArtist) {
+              throw new Error(`Impossible de creer l'artiste ${artist.name}`)
+            }
+            artistIds.push(newArtist.id)
           }
-          artistId = newArtist.id
         }
       }
 
       // Create song with slug collision retry
-      const songSlug = slugify(`${parsed.data.artistName}-${parsed.data.title}`)
+      const firstArtistName = formData.artists[0].name
+      const songSlug = slugify(`${firstArtistName}-${parsed.data.title}`)
       let song = null
 
       for (let attempt = 0; attempt < 5; attempt++) {
@@ -151,7 +153,6 @@ export default function ContribuerPage() {
           .insert({
             title: parsed.data.title,
             slug: trySlug,
-            artist_id: artistId,
             style: parsed.data.style,
             original_key: parsed.data.originalKey || null,
             created_by: user.id,
@@ -165,11 +166,20 @@ export default function ContribuerPage() {
           break
         }
         if (!result.error.message.includes("unique") && !result.error.message.includes("duplicate")) {
-          throw new Error("Impossible de créer la chanson")
+          throw new Error("Impossible de creer la chanson")
         }
       }
 
-      if (!song) throw new Error("Impossible de créer la chanson (slug en conflit)")
+      if (!song) throw new Error("Impossible de creer la chanson (slug en conflit)")
+
+      // Link all artists
+      const { error: linkError } = await supabase
+        .from("song_artists")
+        .insert(artistIds.map((artistId) => ({ song_id: song.id, artist_id: artistId })))
+
+      if (linkError) {
+        throw new Error("Impossible de lier les artistes")
+      }
 
       // Create chord sheet
       const { error: sheetError } = await supabase
