@@ -2,10 +2,12 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Edit } from 'lucide-react'
+import { Edit, Maximize2 } from 'lucide-react'
 import { ChordRenderer } from '@/components/ChordRenderer'
 import { AddToPlaylistButton } from '@/components/AddToPlaylistButton'
+import { SongReaderModal } from '@/components/SongReaderModal'
 import { TransposeControls } from '@/components/TransposeControls'
+import { Button } from '@/components/ui/button'
 import { transposeChordPro } from '@/lib/transpose'
 import type { Instrument } from '@/types/database'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -37,11 +39,13 @@ interface SongDetailClientProps {
   currentUserId: string | null
   songId: string
   songTitle: string
+  artistName: string
 }
 
-export function SongDetailClient({ sheets, originalKey, currentUserId, songId, songTitle }: SongDetailClientProps) {
+export function SongDetailClient({ sheets, originalKey, currentUserId, songId, songTitle, artistName }: SongDetailClientProps) {
   const [activeIndex, setActiveIndex] = useState(0)
   const [semitones, setSemitones] = useState(0)
+  const [readerOpen, setReaderOpen] = useState(false)
 
   if (sheets.length === 0) {
     return (
@@ -110,8 +114,12 @@ export function SongDetailClient({ sheets, originalKey, currentUserId, songId, s
         )}
       </div>
 
-      {/* Add to playlist */}
-      <div className="mb-4">
+      {/* Actions */}
+      <div className="mb-4 flex items-center gap-2">
+        <Button variant="outline" size="sm" onClick={() => setReaderOpen(true)}>
+          <Maximize2 className="w-4 h-4 mr-1" />
+          Mode lecteur
+        </Button>
         <AddToPlaylistButton songId={songId} songTitle={songTitle} />
       </div>
 
@@ -128,6 +136,17 @@ export function SongDetailClient({ sheets, originalKey, currentUserId, songId, s
       <div className="bg-card rounded-xl p-6 overflow-x-auto">
         <ChordRenderer content={transposedContent} />
       </div>
+
+      {/* Reader modal */}
+      {readerOpen && (
+        <SongReaderModal
+          title={songTitle}
+          artistName={artistName}
+          content={activeSheet.content}
+          originalKey={originalKey}
+          onClose={() => setReaderOpen(false)}
+        />
+      )}
     </div>
   )
 }

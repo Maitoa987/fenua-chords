@@ -132,6 +132,7 @@ export default async function SongDetailPage({ params }: Props) {
         currentUserId={user?.id ?? null}
         songId={song.id}
         songTitle={song.title}
+        artistName={artist?.name ?? ''}
       />
 
       {/* YouTube link */}
