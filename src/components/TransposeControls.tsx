@@ -22,7 +22,6 @@ export function TransposeControls({ semitones, onChange, originalKey }: Transpos
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8"
             onClick={() => onChange(semitones - 1)}
             aria-label="Baisser d'un demi-ton"
           >
@@ -34,7 +33,7 @@ export function TransposeControls({ semitones, onChange, originalKey }: Transpos
               const delta = getSemitonesBetween(originalKey, e.target.value)
               onChange(delta)
             }}
-            className="h-10 min-w-[140px] rounded-md border border-input bg-background px-3 text-sm font-semibold text-chord touch-manipulation focus:outline-none focus:ring-2 focus:ring-ring"
+            className="h-10 min-w-[100px] sm:min-w-[140px] rounded-md border border-input bg-background px-3 text-sm font-semibold text-chord touch-manipulation focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             {keys.map((key) => (
               <option key={key} value={key}>
@@ -45,7 +44,6 @@ export function TransposeControls({ semitones, onChange, originalKey }: Transpos
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8"
             onClick={() => onChange(semitones + 1)}
             aria-label="Monter d'un demi-ton"
           >

@@ -96,13 +96,15 @@ function SortableSongRow({
         <p className="text-sm text-muted-foreground">{song.artistName}</p>
       </div>
       <StyleBadge style={song.style as Style} />
-      <button
+      <Button
+        variant="ghost"
+        size="icon"
         onClick={() => onRemove(song.id)}
-        className="text-muted-foreground hover:text-destructive transition-colors p-1"
         aria-label={`Retirer ${song.title}`}
+        className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 shrink-0"
       >
         <Trash2 className="w-4 h-4" />
-      </button>
+      </Button>
     </div>
   )
 }
