@@ -24,7 +24,7 @@ export default async function HomePage() {
     supabase.from("profiles").select("*", { count: "exact", head: true }),
     supabase
       .from("songs")
-      .select("id, title, slug, style, original_key, artists(name)")
+      .select("id, title, slug, style, original_key, song_artists(artists(name))")
       .eq("status", "published")
       .order("created_at", { ascending: false })
       .limit(6),
@@ -106,16 +106,15 @@ export default async function HomePage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {recentSongs.map((song) => {
-              const artistName = Array.isArray(song.artists)
-                ? (song.artists[0] as { name: string })?.name ?? ""
-                : (song.artists as { name: string } | null)?.name ?? "";
+              const songArtists = (song.song_artists as unknown as { artists: { name: string } }[]) ?? []
+              const artistNames = songArtists.map((sa) => sa.artists.name)
               return (
                 <SongCard
                   key={song.id}
                   songId={song.id}
                   title={song.title}
                   slug={song.slug}
-                  artistName={artistName}
+                  artistNames={artistNames}
                   style={song.style as Style}
                   originalKey={song.original_key}
                 />
