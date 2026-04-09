@@ -53,6 +53,8 @@ export interface ChordSheet {
   votes_down: number
   is_official: boolean
   created_at: string
+  updated_at: string
+  last_edited_by: string | null
 }
 
 export interface Playlist {
@@ -109,4 +111,15 @@ export interface Suggestion {
   admin_note: string | null
   created_at: string
   resolved_at: string | null
+}
+
+export interface ChordSheetRevision {
+  id: string
+  chord_sheet_id: string
+  content: string
+  instrument: Instrument
+  tuning: string | null
+  capo: number | null
+  edited_by: string
+  created_at: string
 }
