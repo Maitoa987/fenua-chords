@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { Edit } from 'lucide-react'
 import { ChordRenderer } from '@/components/ChordRenderer'
+import { AddToPlaylistButton } from '@/components/AddToPlaylistButton'
 import { TransposeControls } from '@/components/TransposeControls'
 import { transposeChordPro } from '@/lib/transpose'
 import type { Instrument } from '@/types/database'
@@ -34,9 +35,11 @@ interface SongDetailClientProps {
   sheets: SheetWithProfile[]
   originalKey: string | null
   currentUserId: string | null
+  songId: string
+  songTitle: string
 }
 
-export function SongDetailClient({ sheets, originalKey, currentUserId }: SongDetailClientProps) {
+export function SongDetailClient({ sheets, originalKey, currentUserId, songId, songTitle }: SongDetailClientProps) {
   const [activeIndex, setActiveIndex] = useState(0)
   const [semitones, setSemitones] = useState(0)
 
@@ -105,6 +108,11 @@ export function SongDetailClient({ sheets, originalKey, currentUserId }: SongDet
             Modifier
           </Link>
         )}
+      </div>
+
+      {/* Add to playlist */}
+      <div className="mb-4">
+        <AddToPlaylistButton songId={songId} songTitle={songTitle} />
       </div>
 
       {/* Transpose controls */}

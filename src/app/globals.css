@@ -123,3 +123,12 @@ body {
     @apply border-border outline-ring/50;
   }
 }
+
+/* Hide header/footer in playlist reader mode */
+.playlist-reader-active > header,
+.playlist-reader-active > footer {
+  display: none !important;
+}
+.playlist-reader-active > main {
+  padding: 0 !important;
+}

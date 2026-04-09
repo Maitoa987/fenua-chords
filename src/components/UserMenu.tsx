@@ -2,7 +2,7 @@
 
 import { useRef, useEffect, useState } from "react";
 import Link from "next/link";
-import { User, LogOut, Settings, FileText, Shield } from "lucide-react";
+import { User, LogOut, Settings, FileText, Shield, ListMusic } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface UserMenuProps {
@@ -64,6 +64,14 @@ export function UserMenu({ username, isAdmin, onLogout }: UserMenuProps) {
             >
               <FileText className="w-4 h-4 text-muted-foreground" />
               Mes contributions
+            </Link>
+            <Link
+              href="/playlists"
+              onClick={() => setOpen(false)}
+              className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-muted transition-colors"
+            >
+              <ListMusic className="w-4 h-4 text-muted-foreground" />
+              Ma playlist
             </Link>
             {isAdmin && (
               <Link

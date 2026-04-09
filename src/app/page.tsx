@@ -112,6 +112,7 @@ export default async function HomePage() {
               return (
                 <SongCard
                   key={song.id}
+                  songId={song.id}
                   title={song.title}
                   slug={song.slug}
                   artistName={artistName}

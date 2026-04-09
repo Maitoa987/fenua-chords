@@ -51,6 +51,13 @@ export function MobileMenu({ onClose, user, onLogout, isAdmin, username }: Mobil
           >
             Mes contributions
           </Link>
+          <Link
+            href="/playlists"
+            onClick={onClose}
+            className={buttonVariants({ variant: "ghost", className: "w-full justify-start" })}
+          >
+            Ma playlist
+          </Link>
         </>
       )}
       {isAdmin && (
