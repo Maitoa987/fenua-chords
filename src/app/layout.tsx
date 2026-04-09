@@ -6,6 +6,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { cn } from "@/lib/utils";
 import { PlaylistProvider } from "@/lib/playlist-context";
+import { PlaylistMiniBar } from "@/components/PlaylistMiniBar";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -56,6 +57,7 @@ export default function RootLayout({
           <Header />
           <main className="flex-1">{children}</main>
           <Footer />
+          <PlaylistMiniBar />
         </PlaylistProvider>
       </body>
     </html>
