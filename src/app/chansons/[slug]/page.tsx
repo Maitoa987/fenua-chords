@@ -52,7 +52,7 @@ export default async function SongDetailPage({ params }: Props) {
   const { data: song } = await supabase
     .from('songs')
     .select(
-      'id, title, slug, style, original_key, bpm, youtube_url, artists(name, slug), chord_sheets(id, instrument, tuning, capo, content, contributed_by, votes_up, votes_down, is_official, created_at, profiles:contributed_by(username))'
+      'id, title, slug, style, original_key, bpm, youtube_url, artists(name, slug), chord_sheets(id, instrument, tuning, capo, content, contributed_by, votes_up, votes_down, is_official, created_at, updated_at, last_edited_by, profiles:contributed_by(username), editor:last_edited_by(username))'
     )
     .eq('slug', slug)
     .eq('status', 'published')
@@ -75,7 +75,10 @@ export default async function SongDetailPage({ params }: Props) {
     votes_down: number
     is_official: boolean
     created_at: string
+    updated_at: string | null
+    last_edited_by: string | null
     profiles: { username: string } | null
+    editor: { username: string } | null
   }
 
   const sheets = (

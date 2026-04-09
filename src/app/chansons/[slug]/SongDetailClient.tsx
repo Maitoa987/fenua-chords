@@ -30,7 +30,10 @@ interface SheetWithProfile {
   votes_down: number
   is_official: boolean
   created_at: string
+  updated_at: string | null
+  last_edited_by: string | null
   profiles: { username: string } | null
+  editor: { username: string } | null
 }
 
 interface SongDetailClientProps {
@@ -104,7 +107,13 @@ export function SongDetailClient({ sheets, originalKey, currentUserId, songId, s
             {activeSheet.profiles.username}
           </span>
         )}
-        {currentUserId && (
+        {activeSheet.editor?.username && activeSheet.last_edited_by !== activeSheet.contributed_by && (
+          <span>
+            <span className="font-medium text-foreground">Modifié par :</span>{' '}
+            {activeSheet.editor.username}
+          </span>
+        )}
+        {currentUserId && !activeSheet.is_official && (
           <Link
             href={`/contribuer/${activeSheet.id}/edit`}
             className="text-sm text-primary hover:underline flex items-center gap-1"
