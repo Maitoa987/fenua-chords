@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server"
 import { Badge } from "@/components/ui/badge"
 import { DeleteButton } from "./DeleteButton"
+import { RevisionHistory } from "./RevisionHistory"
 import type { Style, Instrument } from "@/types/database"
 
 interface SongRow {
@@ -81,11 +82,17 @@ export default async function AdminContenuPage() {
                         <span className="text-xs text-muted-foreground capitalize">
                           Partition — {sheet.instrument}
                         </span>
-                        <DeleteButton
-                          type="chord_sheet"
-                          id={sheet.id}
-                          label={`partition ${sheet.instrument} de ${song.title}`}
-                        />
+                        <div className="flex items-center gap-2">
+                          <RevisionHistory
+                            sheetId={sheet.id}
+                            sheetLabel={`${sheet.instrument} de ${song.title}`}
+                          />
+                          <DeleteButton
+                            type="chord_sheet"
+                            id={sheet.id}
+                            label={`partition ${sheet.instrument} de ${song.title}`}
+                          />
+                        </div>
                       </div>
                     ))}
                   </div>
