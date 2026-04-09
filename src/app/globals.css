@@ -172,3 +172,11 @@ body {
 .playlist-reader-active > main {
   padding: 0 !important;
 }
+
+/* Safe area for fullscreen readers (iPhone notch) */
+@supports (padding: env(safe-area-inset-top)) {
+  .reader-safe-area {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
