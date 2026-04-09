@@ -3,7 +3,7 @@ import { z } from "zod"
 export const songSchema = z.object({
   title: z.string().trim().min(1, "Le titre est requis").max(200, "Le titre ne peut pas dépasser 200 caractères"),
   artistName: z.string().trim().min(1, "L'artiste est requis").max(100, "Le nom d'artiste ne peut pas dépasser 100 caractères"),
-  artistId: z.string().uuid().nullable(),
+  artistId: z.union([z.string().uuid("Identifiant artiste invalide"), z.literal(""), z.null()]).transform((v) => v === "" ? null : v),
   style: z.enum(["bringue", "himene", "variete", "traditionnel", "autre"]),
   instrument: z.enum(["guitare", "ukulele", "basse", "ukulele-bass"]),
   originalKey: z.string().max(10).regex(/^([A-G][#b]?m?[0-9]?)?$/, "Tonalité invalide").or(z.literal("")),
