@@ -19,9 +19,9 @@ export function ChordProTextarea({ value, onChange }: ChordProTextareaProps) {
         <Textarea
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          rows={12}
+          rows={16}
           placeholder={"[Am]Ia ora na [C]tatou\n[F]E haere [G]mai..."}
-          className="font-mono text-sm resize-y"
+          className="font-mono text-sm resize-y min-h-[300px]"
         />
       </div>
 

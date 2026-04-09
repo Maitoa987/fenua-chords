@@ -76,9 +76,9 @@ export function ChordEditor({ initialContent = "", onContentChange }: ChordEdito
               <Textarea
                 value={lyrics}
                 onChange={(e) => setLyrics(e.target.value)}
-                rows={10}
+                rows={16}
                 placeholder={"Ia ora na tatou\nE haere mai..."}
-                className="font-mono text-sm resize-y"
+                className="font-mono text-sm resize-y min-h-[300px]"
               />
               <Button
                 onClick={() => setLyricsConfirmed(true)}

@@ -188,7 +188,7 @@ export default function EditChordSheetPage({ params }: PageProps) {
         </Alert>
       )}
 
-      <section className="space-y-4">
+      <section className="bg-card border border-border rounded-xl p-6 space-y-4">
         <h2 className="text-lg font-semibold">Paramètres</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* Instrument */}
@@ -248,7 +248,7 @@ export default function EditChordSheetPage({ params }: PageProps) {
         </div>
       </section>
 
-      <section className="space-y-4">
+      <section className="bg-card border border-border rounded-xl p-6 space-y-4">
         <h2 className="text-lg font-semibold">Accords</h2>
         <ChordEditor initialContent={content} onContentChange={setContent} />
       </section>

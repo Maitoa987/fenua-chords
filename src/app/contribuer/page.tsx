@@ -207,19 +207,19 @@ export default function ContribuerPage() {
         </Alert>
       )}
 
-      <section className="space-y-4">
+      <section className="bg-card border border-border rounded-xl p-6 space-y-4">
         <h2 className="text-lg font-semibold">Informations</h2>
         <SongForm data={formData} onChange={setFormData} />
       </section>
 
-      <section className="space-y-4">
+      <section className="bg-card border border-border rounded-xl p-6 space-y-4">
         <h2 className="text-lg font-semibold">Accords</h2>
         <ChordEditor onContentChange={setContent} />
       </section>
 
       {/* Preview toggle */}
       {content.trim() && (
-        <section className="space-y-3">
+        <section className="bg-card border border-border rounded-xl p-6 space-y-3">
           <Button
             variant="link"
             onClick={() => setShowPreview((v) => !v)}
