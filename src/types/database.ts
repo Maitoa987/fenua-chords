@@ -38,6 +38,7 @@ export interface Song {
   created_by: string
   status: SongStatus
   created_at: string
+  likes_count: number
 }
 
 export interface SongArtist {
@@ -96,6 +97,13 @@ export interface ChordVote {
 }
 
 export interface Favorite {
+  id: string
+  user_id: string
+  song_id: string
+  created_at: string
+}
+
+export interface Like {
   id: string
   user_id: string
   song_id: string
