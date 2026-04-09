@@ -100,7 +100,7 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-1.5">
           <Label htmlFor="firstName">Prénom</Label>
           <Input
@@ -134,7 +134,7 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
         <p className="text-xs text-muted-foreground text-right">{bio.length}/500</p>
       </div>
 
-      <Button type="submit" disabled={loading}>
+      <Button type="submit" disabled={loading} className="w-full sm:w-auto">
         {loading ? "Enregistrement..." : "Enregistrer"}
       </Button>
     </form>

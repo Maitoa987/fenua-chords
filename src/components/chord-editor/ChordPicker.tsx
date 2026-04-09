@@ -91,7 +91,7 @@ export function ChordPicker({
         {/* Common chords grid */}
         <div>
           <p className="text-xs text-muted-foreground mb-2">Accords courants</p>
-          <div className="grid grid-cols-7 gap-2">
+          <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">
             {COMMON_CHORDS.map((chord) => (
               <Button
                 key={chord}

@@ -117,7 +117,7 @@ export function PlaylistManagerClient({ playlist, songs: initialSongs, followedP
   const { activate } = usePlaylist()
 
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
   )
 

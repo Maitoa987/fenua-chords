@@ -12,7 +12,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <h1 className="font-heading text-2xl text-primary">Administration</h1>
       </div>
 
-      <nav className="flex gap-2 mb-8 border-b border-border pb-2">
+      <nav className="flex flex-wrap gap-2 mb-8 border-b border-border pb-2">
         <Link href="/admin" className="px-4 py-2 rounded-lg text-sm font-medium hover:bg-muted transition-colors">
           Dashboard
         </Link>

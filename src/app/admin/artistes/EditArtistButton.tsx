@@ -38,7 +38,7 @@ export function EditArtistButton({ id, name, origin }: EditArtistButtonProps) {
 
   if (editing) {
     return (
-      <div className="flex items-center gap-2 flex-1 min-w-0">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 flex-1 min-w-0">
         <Input
           value={newName}
           onChange={(e) => setNewName(e.target.value)}
@@ -54,17 +54,17 @@ export function EditArtistButton({ id, name, origin }: EditArtistButtonProps) {
         <Button
           variant="ghost"
           size="icon"
-          className="h-8 w-8 text-primary"
           onClick={handleSave}
           disabled={loading || !newName.trim()}
+          aria-label="Enregistrer"
         >
           <Check className="w-4 h-4" />
         </Button>
         <Button
           variant="ghost"
           size="icon"
-          className="h-8 w-8"
           onClick={() => { setEditing(false); setNewName(name); setNewOrigin(origin ?? ""); }}
+          aria-label="Annuler"
         >
           <X className="w-4 h-4" />
         </Button>
@@ -73,7 +73,7 @@ export function EditArtistButton({ id, name, origin }: EditArtistButtonProps) {
   }
 
   return (
-    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setEditing(true)}>
+    <Button variant="ghost" size="icon" onClick={() => setEditing(true)} aria-label="Modifier">
       <Pencil className="w-3.5 h-3.5" />
     </Button>
   )
