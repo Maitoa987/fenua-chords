@@ -14,7 +14,7 @@ interface AddToPlaylistButtonProps {
 
 export function AddToPlaylistButton({ songId, songTitle, variant = 'default' }: AddToPlaylistButtonProps) {
   const router = useRouter()
-  const [state, setState] = useState<'idle' | 'loading' | 'added' | 'already' | 'no-playlist' | 'no-auth'>('idle')
+  const [state, setState] = useState<'idle' | 'loading' | 'added' | 'already' | 'no-playlist' | 'no-auth' | 'error'>('idle')
 
   useEffect(() => {
     const supabase = createClient()
