@@ -1,6 +1,8 @@
+import { Suspense } from "react"
 import { createClient } from "@/lib/supabase/server"
 import { Badge } from "@/components/ui/badge"
 import { SuggestionActions } from "./SuggestionActions"
+import { SearchBar } from "@/components/SearchBar"
 import type { SuggestionType, SuggestionStatus } from "@/types/database"
 
 const TYPE_LABELS: Record<SuggestionType, string> = {
@@ -34,10 +36,15 @@ interface SuggestionRow {
   profiles: { username: string } | null
 }
 
-export default async function AdminSuggestionsPage() {
+interface Props {
+  searchParams: Promise<{ q?: string; type?: string }>
+}
+
+export default async function AdminSuggestionsPage({ searchParams }: Props) {
+  const { q, type } = await searchParams
   const supabase = await createClient()
 
-  const { data: suggestions } = await supabase
+  let query = supabase
     .from("suggestions")
     .select(`
       id,
@@ -51,11 +58,29 @@ export default async function AdminSuggestionsPage() {
       profiles:user_id(username)
     `)
     .order("created_at", { ascending: false })
-    .limit(100)
+
+  if (q) {
+    query = query.ilike("message", `%${q}%`)
+  }
+
+  if (type && type !== "tous") {
+    query = query.eq("type", type)
+  }
+
+  const { data: suggestions } = await query
 
   const rows = (suggestions ?? []) as unknown as SuggestionRow[]
   const pending = rows.filter((r) => r.status === "pending")
   const resolved = rows.filter((r) => r.status !== "pending")
+
+  const typeFilters = [
+    { value: "tous", label: "Tous" },
+    { value: "correction_artiste", label: "Correction artiste" },
+    { value: "fusion_artiste", label: "Fusion artiste" },
+    { value: "correction_chanson", label: "Correction chanson" },
+    { value: "signalement", label: "Signalement" },
+  ]
+  const activeType = type ?? "tous"
 
   return (
     <div className="space-y-8">
@@ -66,8 +91,35 @@ export default async function AdminSuggestionsPage() {
         </p>
       </div>
 
-      {pending.length === 0 && (
-        <p className="text-muted-foreground text-center py-8">Aucune suggestion en attente.</p>
+      <Suspense>
+        <SearchBar placeholder="Rechercher dans les suggestions..." />
+      </Suspense>
+
+      {/* Type filter */}
+      <div className="flex flex-wrap gap-2">
+        {typeFilters.map(({ value, label }) => {
+          const params = new URLSearchParams()
+          if (q) params.set("q", q)
+          if (value !== "tous") params.set("type", value)
+          const qs = params.toString()
+          return (
+            <a
+              key={value}
+              href={`/admin/suggestions${qs ? `?${qs}` : ""}`}
+              className={`px-3 py-1 rounded-full text-xs font-medium transition-all border ${
+                activeType === value
+                  ? "bg-foreground text-background border-foreground"
+                  : "bg-card text-muted-foreground border-border hover:border-foreground/30"
+              }`}
+            >
+              {label}
+            </a>
+          )
+        })}
+      </div>
+
+      {pending.length === 0 && resolved.length === 0 && (
+        <p className="text-muted-foreground text-center py-8">Aucune suggestion trouvée.</p>
       )}
 
       {pending.length > 0 && (

@@ -1,15 +1,28 @@
+import { Suspense } from "react"
 import { createClient } from "@/lib/supabase/server"
 import { MergeArtists } from "./MergeArtists"
 import { DeleteArtistButton } from "./DeleteArtistButton"
 import { EditArtistButton } from "./EditArtistButton"
+import { SearchBar } from "@/components/SearchBar"
 
-export default async function AdminArtistesPage() {
+interface Props {
+  searchParams: Promise<{ q?: string }>
+}
+
+export default async function AdminArtistesPage({ searchParams }: Props) {
+  const { q } = await searchParams
   const supabase = await createClient()
 
-  const { data: artists } = await supabase
+  let query = supabase
     .from("artists")
     .select("id, name, origin, slug, song_artists(count)")
     .order("name", { ascending: true })
+
+  if (q) {
+    query = query.ilike("name", `%${q}%`)
+  }
+
+  const { data: artists } = await query
 
   const artistsWithCount = (artists ?? []).map((a) => ({
     id: a.id,
@@ -22,6 +35,10 @@ export default async function AdminArtistesPage() {
   return (
     <div className="space-y-6">
       <h2 className="text-lg font-semibold">Artistes ({artistsWithCount.length})</h2>
+
+      <Suspense>
+        <SearchBar placeholder="Rechercher un artiste..." />
+      </Suspense>
 
       {artistsWithCount.length >= 2 && (
         <MergeArtists
@@ -48,7 +65,7 @@ export default async function AdminArtistesPage() {
             </div>
           ))
         ) : (
-          <p className="text-sm text-muted-foreground px-4 py-6">Aucun artiste.</p>
+          <p className="text-sm text-muted-foreground px-4 py-6">Aucun artiste trouvé.</p>
         )}
       </div>
     </div>
