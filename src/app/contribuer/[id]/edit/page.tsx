@@ -16,6 +16,8 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { editSheetSchema } from "@/lib/validation"
+import { ArtistAutocomplete, type ArtistValue } from "@/components/ArtistAutocomplete"
+import { slugify } from "@/lib/slugify"
 
 const INSTRUMENTS: { value: Instrument; label: string }[] = [
   { value: "guitare", label: "Guitare" },
@@ -62,6 +64,8 @@ export default function EditChordSheetPage({ params }: PageProps) {
   const [capo, setCapo] = useState(0)
   const [tuning, setTuning] = useState("")
   const [content, setContent] = useState("")
+  const [artists, setArtists] = useState<ArtistValue[]>([])
+  const [initialArtists, setInitialArtists] = useState<ArtistValue[]>([])
 
   useEffect(() => {
     async function load() {
@@ -98,6 +102,20 @@ export default function EditChordSheetPage({ params }: PageProps) {
       setCapo(typedData.capo ?? 0)
       setTuning(typedData.tuning ?? "")
       setContent(typedData.content)
+
+      // Load artists for this song
+      const { data: songArtists } = await supabase
+        .from("song_artists")
+        .select("artists(id, name)")
+        .eq("song_id", (typedData as SheetData).song_id)
+
+      const loadedArtists: ArtistValue[] = (songArtists ?? []).map((sa) => {
+        const a = (sa as unknown as { artists: { id: string; name: string } }).artists
+        return { id: a.id, name: a.name }
+      })
+      setArtists(loadedArtists)
+      setInitialArtists(loadedArtists)
+
       setLoading(false)
     }
 
@@ -183,6 +201,59 @@ export default function EditChordSheetPage({ params }: PageProps) {
 
       if (updateError) {
         throw new Error("Impossible de sauvegarder les modifications")
+      }
+
+      // Save artist changes if modified
+      const initialIds = new Set(initialArtists.map((a) => a.id))
+      const resolvedArtistIds: string[] = []
+
+      for (const artist of artists) {
+        if (artist.id) {
+          resolvedArtistIds.push(artist.id)
+        } else {
+          const artistSlug = slugify(artist.name)
+          const { data: existing } = await supabase
+            .from("artists")
+            .select("id")
+            .eq("slug", artistSlug)
+            .single()
+
+          if (existing) {
+            resolvedArtistIds.push(existing.id)
+          } else {
+            const { data: created } = await supabase
+              .from("artists")
+              .insert({ name: artist.name, slug: artistSlug })
+              .select("id")
+              .single()
+            if (created) {
+              resolvedArtistIds.push(created.id)
+            }
+          }
+        }
+      }
+
+      const currentIds = new Set(resolvedArtistIds)
+
+      // Remove artists no longer selected
+      const toRemove = initialArtists
+        .filter((a) => a.id && !currentIds.has(a.id))
+        .map((a) => a.id!)
+
+      if (toRemove.length > 0) {
+        await supabase
+          .from("song_artists")
+          .delete()
+          .eq("song_id", sheet.song_id)
+          .in("artist_id", toRemove)
+      }
+
+      // Add newly selected artists
+      const toAdd = resolvedArtistIds.filter((id) => !initialIds.has(id))
+      if (toAdd.length > 0) {
+        await supabase
+          .from("song_artists")
+          .insert(toAdd.map((artistId) => ({ song_id: sheet.song_id, artist_id: artistId })))
       }
 
       router.push(`/chansons/${sheet.songs.slug}`)
@@ -285,6 +356,14 @@ export default function EditChordSheetPage({ params }: PageProps) {
             />
           </div>
         </div>
+      </section>
+
+      <section className="bg-card border border-border rounded-xl p-6 space-y-4">
+        <h2 className="text-lg font-semibold">Artiste(s)</h2>
+        <ArtistAutocomplete value={artists} onChange={setArtists} />
+        <p className="text-xs text-muted-foreground">
+          Modifie les artistes associes a cette chanson.
+        </p>
       </section>
 
       <section className="bg-card border border-border rounded-xl p-6 space-y-4">
