@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/server'
 import { StyleBadge } from '@/components/StyleBadge'
 import { SuggestCorrectionButton } from '@/components/SuggestCorrectionButton'
 import { SongDetailClient } from './SongDetailClient'
+import { ArtistTags } from '@/components/ArtistTags'
 import type { Style, Instrument } from '@/types/database'
 
 export const revalidate = 3600
@@ -20,7 +21,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const { data: song } = await supabase
     .from('songs')
-    .select('title, artists(name)')
+    .select('title, song_artists(artists(name))')
     .eq('slug', slug)
     .single()
 
@@ -28,9 +29,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return { title: 'Chanson introuvable — Fenua Chords' }
   }
 
-  const artist = song.artists as unknown as { name: string } | null
-  const title = `${song.title}${artist ? ` — ${artist.name}` : ''} | Fenua Chords`
-  const description = `Accords et paroles de ${song.title}${artist ? ` par ${artist.name}` : ''} sur Fenua Chords.`
+  const songArtists = (song.song_artists as unknown as { artists: { name: string } }[]) ?? []
+  const artistNamesStr = songArtists.map((sa) => sa.artists.name).join(", ")
+  const title = `${song.title}${artistNamesStr ? ` — ${artistNamesStr}` : ''} | Fenua Chords`
+  const description = `Accords et paroles de ${song.title}${artistNamesStr ? ` par ${artistNamesStr}` : ''} sur Fenua Chords.`
 
   return {
     title,
@@ -52,7 +54,7 @@ export default async function SongDetailPage({ params }: Props) {
   const { data: song } = await supabase
     .from('songs')
     .select(
-      'id, title, slug, style, original_key, bpm, youtube_url, artists(name, slug), chord_sheets(id, instrument, tuning, capo, content, contributed_by, votes_up, votes_down, is_official, created_at, updated_at, last_edited_by, profiles:contributed_by(username), editor:last_edited_by(username))'
+      'id, title, slug, style, original_key, bpm, youtube_url, song_artists(artists(name, slug)), chord_sheets(id, instrument, tuning, capo, content, contributed_by, votes_up, votes_down, is_official, created_at, updated_at, last_edited_by, profiles:contributed_by(username), editor:last_edited_by(username))'
     )
     .eq('slug', slug)
     .eq('status', 'published')
@@ -62,7 +64,8 @@ export default async function SongDetailPage({ params }: Props) {
     notFound()
   }
 
-  const artist = song.artists as unknown as { name: string; slug: string } | null
+  const songArtists = (song.song_artists as unknown as { artists: { name: string; slug: string } }[]) ?? []
+  const artists = songArtists.map((sa) => sa.artists)
 
   type SheetRaw = {
     id: string
@@ -126,13 +129,8 @@ export default async function SongDetailPage({ params }: Props) {
           />
         </div>
 
-        {artist && (
-          <Link
-            href={`/artistes/${artist.slug}`}
-            className="text-primary hover:underline text-lg mt-1 inline-block"
-          >
-            {artist.name}
-          </Link>
+        {artists.length > 0 && (
+          <ArtistTags artists={artists} className="mt-2" />
         )}
       </div>
 
@@ -143,7 +141,7 @@ export default async function SongDetailPage({ params }: Props) {
         currentUserId={user?.id ?? null}
         songId={song.id}
         songTitle={song.title}
-        artistName={artist?.name ?? ''}
+        artistName={artists.map((a) => a.name).join(', ')}
         songSlug={song.slug}
       />
 
