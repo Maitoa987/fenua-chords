@@ -30,7 +30,6 @@ export interface Song {
   id: string
   title: string
   slug: string
-  artist_id: string
   style: Style
   language: string | null
   original_key: string | null
@@ -38,6 +37,12 @@ export interface Song {
   youtube_url: string | null
   created_by: string
   status: SongStatus
+  created_at: string
+}
+
+export interface SongArtist {
+  song_id: string
+  artist_id: string
   created_at: string
 }
 
