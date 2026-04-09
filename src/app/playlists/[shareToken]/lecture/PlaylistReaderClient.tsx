@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { X, ChevronLeft, ChevronRight, Minus, Plus, Play, Pause, ChevronsDown } from 'lucide-react'
 import { ChordRenderer } from '@/components/ChordRenderer'
@@ -160,10 +160,14 @@ export function PlaylistReaderClient({ playlistTitle, shareToken, playlistId, so
   }, [fontSizeIndex])
 
   // Reset semitones & scroll on song change
+  const prevIndexRef = useRef(currentIndex)
+  if (prevIndexRef.current !== currentIndex) {
+    prevIndexRef.current = currentIndex
+    if (semitones !== 0) setSemitones(0)
+    if (scrolling) setScrolling(false)
+  }
   useEffect(() => {
-    setSemitones(0)
     window.scrollTo(0, 0)
-    setScrolling(false)
   }, [currentIndex])
 
   function handleClose() {

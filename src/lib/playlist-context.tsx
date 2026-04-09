@@ -32,18 +32,18 @@ const PlaylistContext = createContext<PlaylistContextValue | null>(null)
 
 const STORAGE_KEY = 'fenua-active-playlist'
 
-export function PlaylistProvider({ children }: { children: ReactNode }) {
-  const [active, setActive] = useState<ActivePlaylist | null>(null)
+function getInitialPlaylist(): ActivePlaylist | null {
+  if (typeof window === 'undefined') return null
+  try {
+    const stored = sessionStorage.getItem(STORAGE_KEY)
+    return stored ? JSON.parse(stored) : null
+  } catch {
+    return null
+  }
+}
 
-  // Restore from sessionStorage on mount
-  useEffect(() => {
-    try {
-      const stored = sessionStorage.getItem(STORAGE_KEY)
-      if (stored) setActive(JSON.parse(stored))
-    } catch {
-      // Ignore parse errors
-    }
-  }, [])
+export function PlaylistProvider({ children }: { children: ReactNode }) {
+  const [active, setActive] = useState<ActivePlaylist | null>(getInitialPlaylist)
 
   // Persist to sessionStorage on change
   useEffect(() => {
