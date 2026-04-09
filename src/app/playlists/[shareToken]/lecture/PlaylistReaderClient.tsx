@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { ChordRenderer } from '@/components/ChordRenderer'
 import { ReaderToolbar } from '@/components/ReaderToolbar'
-import { transposeChordPro, getTransposedKey, getSemitonesBetween, getAllKeys } from '@/lib/transpose'
+import { transposeChordPro } from '@/lib/transpose'
 import { usePlaylist } from '@/lib/playlist-context'
 
 const SPEED_LABELS = ['Tres lent', 'Lent', 'Normal', 'Rapide', 'Tres rapide']

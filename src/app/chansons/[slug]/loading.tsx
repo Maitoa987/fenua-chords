@@ -18,8 +18,8 @@ export default function SongDetailLoading() {
       </div>
       <Skeleton className="h-10 w-72 mb-6" />
       <div className="bg-card rounded-xl p-4 sm:p-6 space-y-3">
-        {Array.from({ length: 12 }).map((_, i) => (
-          <Skeleton key={i} className="h-4" style={{ width: `${60 + Math.random() * 40}%` }} />
+        {[85, 70, 95, 60, 80, 90, 75, 65, 88, 72, 92, 68].map((w, i) => (
+          <Skeleton key={i} className="h-4" style={{ width: `${w}%` }} />
         ))}
       </div>
     </div>
