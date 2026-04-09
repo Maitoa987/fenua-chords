@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { SongCard } from "@/components/SongCard";
+import { SuggestCorrectionButton } from "@/components/SuggestCorrectionButton";
 import type { Style } from "@/types/database";
 
 interface Props {
@@ -61,7 +62,14 @@ export default async function ArtistDetailPage({ params }: Props) {
       </Link>
 
       <div className="mb-8">
-        <h1 className="font-heading text-3xl text-foreground">{artist.name}</h1>
+        <div className="flex flex-wrap items-center gap-3">
+          <h1 className="font-heading text-3xl text-foreground">{artist.name}</h1>
+          <SuggestCorrectionButton
+            targetType="artist"
+            targetId={artist.id}
+            targetName={artist.name}
+          />
+        </div>
         {artist.origin && (
           <p className="text-muted-foreground mt-1">{artist.origin}</p>
         )}

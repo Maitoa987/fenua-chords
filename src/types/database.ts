@@ -94,3 +94,19 @@ export interface Favorite {
   song_id: string
   created_at: string
 }
+
+export type SuggestionType = 'correction_artiste' | 'fusion_artiste' | 'correction_chanson' | 'signalement'
+export type SuggestionStatus = 'pending' | 'accepted' | 'rejected'
+
+export interface Suggestion {
+  id: string
+  user_id: string
+  type: SuggestionType
+  target_type: 'artist' | 'song' | 'chord_sheet'
+  target_id: string
+  message: string
+  status: SuggestionStatus
+  admin_note: string | null
+  created_at: string
+  resolved_at: string | null
+}

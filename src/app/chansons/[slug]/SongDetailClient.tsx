@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Edit, Maximize2 } from 'lucide-react'
+import { Edit, Maximize2, Plus } from 'lucide-react'
 import { ChordRenderer } from '@/components/ChordRenderer'
 import { AddToPlaylistButton } from '@/components/AddToPlaylistButton'
 import { SongReaderModal } from '@/components/SongReaderModal'
@@ -40,9 +40,10 @@ interface SongDetailClientProps {
   songId: string
   songTitle: string
   artistName: string
+  songSlug: string
 }
 
-export function SongDetailClient({ sheets, originalKey, currentUserId, songId, songTitle, artistName }: SongDetailClientProps) {
+export function SongDetailClient({ sheets, originalKey, currentUserId, songId, songTitle, artistName, songSlug }: SongDetailClientProps) {
   const [activeIndex, setActiveIndex] = useState(0)
   const [semitones, setSemitones] = useState(0)
   const [readerOpen, setReaderOpen] = useState(false)
@@ -103,7 +104,7 @@ export function SongDetailClient({ sheets, originalKey, currentUserId, songId, s
             {activeSheet.profiles.username}
           </span>
         )}
-        {currentUserId && activeSheet.contributed_by === currentUserId && (
+        {currentUserId && (
           <Link
             href={`/contribuer/${activeSheet.id}/edit`}
             className="text-sm text-primary hover:underline flex items-center gap-1"
@@ -115,12 +116,20 @@ export function SongDetailClient({ sheets, originalKey, currentUserId, songId, s
       </div>
 
       {/* Actions */}
-      <div className="mb-4 flex items-center gap-2">
+      <div className="mb-4 flex flex-wrap items-center gap-2">
         <Button variant="outline" size="sm" onClick={() => setReaderOpen(true)}>
           <Maximize2 className="w-4 h-4 mr-1" />
           Mode lecteur
         </Button>
         <AddToPlaylistButton songId={songId} songTitle={songTitle} />
+        {currentUserId && (
+          <Link href={`/chansons/${songSlug}/contribuer`}>
+            <Button variant="outline" size="sm">
+              <Plus className="w-4 h-4 mr-1" />
+              Ajouter une grille
+            </Button>
+          </Link>
+        )}
       </div>
 
       {/* Transpose controls */}

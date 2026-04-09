@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { StyleBadge } from '@/components/StyleBadge'
+import { SuggestCorrectionButton } from '@/components/SuggestCorrectionButton'
 import { SongDetailClient } from './SongDetailClient'
 import type { Style, Instrument } from '@/types/database'
 
@@ -113,7 +114,14 @@ export default async function SongDetailPage({ params }: Props) {
           )}
         </div>
 
-        <h1 className="font-heading text-3xl text-foreground">{song.title}</h1>
+        <div className="flex flex-wrap items-center gap-3">
+          <h1 className="font-heading text-3xl text-foreground">{song.title}</h1>
+          <SuggestCorrectionButton
+            targetType="song"
+            targetId={song.id}
+            targetName={song.title}
+          />
+        </div>
 
         {artist && (
           <Link
@@ -133,6 +141,7 @@ export default async function SongDetailPage({ params }: Props) {
         songId={song.id}
         songTitle={song.title}
         artistName={artist?.name ?? ''}
+        songSlug={song.slug}
       />
 
       {/* YouTube link */}

@@ -2,6 +2,8 @@
 
 import { use, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
+import { ArrowLeft } from "lucide-react"
 import { ChordEditor } from "@/components/chord-editor/ChordEditor"
 import type { Instrument } from "@/types/database"
 import { Label } from "@/components/ui/label"
@@ -29,28 +31,20 @@ const INSTRUMENT_LABEL: Record<Instrument, string> = Object.fromEntries(
 ) as Record<Instrument, string>
 
 interface PageProps {
-  params: Promise<{ id: string }>
+  params: Promise<{ slug: string }>
 }
 
-interface SheetData {
+interface SongInfo {
   id: string
-  song_id: string
-  instrument: Instrument
-  tuning: string | null
-  capo: number | null
-  content: string
-  contributed_by: string
-  songs: {
-    slug: string
-    title: string
-  }
+  title: string
+  slug: string
 }
 
-export default function EditChordSheetPage({ params }: PageProps) {
-  const { id } = use(params)
+export default function AddChordSheetPage({ params }: PageProps) {
+  const { slug } = use(params)
   const router = useRouter()
 
-  const [sheet, setSheet] = useState<SheetData | null>(null)
+  const [song, setSong] = useState<SongInfo | null>(null)
   const [notFound, setNotFound] = useState(false)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -73,9 +67,10 @@ export default function EditChordSheetPage({ params }: PageProps) {
       }
 
       const { data, error: fetchError } = await supabase
-        .from("chord_sheets")
-        .select("id, song_id, instrument, tuning, capo, content, contributed_by, songs(slug, title)")
-        .eq("id", id)
+        .from("songs")
+        .select("id, title, slug")
+        .eq("slug", slug)
+        .eq("status", "published")
         .single()
 
       if (fetchError || !data) {
@@ -84,20 +79,15 @@ export default function EditChordSheetPage({ params }: PageProps) {
         return
       }
 
-      const typedData = data as unknown as SheetData
-      setSheet(typedData)
-      setInstrument(typedData.instrument)
-      setCapo(typedData.capo ?? 0)
-      setTuning(typedData.tuning ?? "")
-      setContent(typedData.content)
+      setSong(data)
       setLoading(false)
     }
 
     load()
-  }, [id, router])
+  }, [slug, router])
 
-  async function handleSave() {
-    if (!sheet) return
+  async function handleSubmit() {
+    if (!song) return
     setSaving(true)
     setError(null)
 
@@ -113,21 +103,28 @@ export default function EditChordSheetPage({ params }: PageProps) {
       const { createClient } = await import("@/lib/supabase/client")
       const supabase = createClient()
 
-      const { error: updateError } = await supabase
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) {
+        router.push("/connexion")
+        return
+      }
+
+      const { error: insertError } = await supabase
         .from("chord_sheets")
-        .update({
+        .insert({
+          song_id: song.id,
           instrument: parsed.data.instrument,
           capo: parsed.data.capo || null,
           tuning: parsed.data.tuning || null,
           content: parsed.data.content,
+          contributed_by: user.id,
         })
-        .eq("id", id)
 
-      if (updateError) {
-        throw new Error("Impossible de sauvegarder les modifications")
+      if (insertError) {
+        throw new Error("Impossible de créer la fiche d'accords")
       }
 
-      router.push(`/chansons/${sheet.songs.slug}`)
+      router.push(`/chansons/${song.slug}`)
     } catch {
       setError("Une erreur est survenue. Réessaie plus tard.")
       setSaving(false)
@@ -145,21 +142,29 @@ export default function EditChordSheetPage({ params }: PageProps) {
   if (notFound) {
     return (
       <main className="max-w-2xl mx-auto px-4 py-8 text-center space-y-4">
-        <h1 className="text-2xl font-bold">Fiche introuvable</h1>
-        <p className="text-muted-foreground">Cette fiche d&apos;accords n&apos;existe pas.</p>
-        <button onClick={() => router.back()} className="text-primary underline cursor-pointer">
-          Retour
-        </button>
+        <h1 className="text-2xl font-bold">Chanson introuvable</h1>
+        <p className="text-muted-foreground">Cette chanson n&apos;existe pas ou n&apos;est pas publiée.</p>
+        <Link href="/chansons" className="text-primary underline">
+          Retour aux chansons
+        </Link>
       </main>
     )
   }
 
   return (
     <main className="max-w-2xl mx-auto px-4 py-8 space-y-8">
+      <Link
+        href={`/chansons/${slug}`}
+        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+      >
+        <ArrowLeft className="w-4 h-4" />
+        Retour à la chanson
+      </Link>
+
       <div>
-        <h1 className="text-3xl font-bold mb-1">Modifier la fiche</h1>
-        {sheet && (
-          <p className="text-muted-foreground">{sheet.songs.title}</p>
+        <h1 className="text-3xl font-bold mb-1">Ajouter une grille</h1>
+        {song && (
+          <p className="text-muted-foreground">Pour : <span className="font-medium text-foreground">{song.title}</span></p>
         )}
       </div>
 
@@ -231,16 +236,16 @@ export default function EditChordSheetPage({ params }: PageProps) {
 
       <section className="bg-card border border-border rounded-xl p-6 space-y-4">
         <h2 className="text-lg font-semibold">Accords</h2>
-        <ChordEditor initialContent={content} onContentChange={setContent} />
+        <ChordEditor onContentChange={setContent} />
       </section>
 
       <Button
         size="lg"
-        onClick={handleSave}
+        onClick={handleSubmit}
         disabled={saving || !content.trim()}
         className="w-full bg-accent hover:bg-accent/90 text-white"
       >
-        {saving ? "Sauvegarde..." : "Sauvegarder les modifications"}
+        {saving ? "Publication..." : "Publier la grille d'accords"}
       </Button>
     </main>
   )
