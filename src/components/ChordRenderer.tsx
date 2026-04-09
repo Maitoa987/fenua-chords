@@ -9,7 +9,7 @@ export function ChordRenderer({ content, className }: ChordRendererProps) {
   const lines = parseChordPro(content)
 
   return (
-    <div className={className ?? "font-mono text-base leading-relaxed whitespace-pre-wrap"}>
+    <div className={className ?? "font-mono text-sm md:text-base leading-relaxed whitespace-pre-wrap break-words"}>
       {lines.map((line, lineIndex) => {
         const hasChords = line.segments.some((seg) => seg.chord !== null)
 

@@ -82,7 +82,7 @@ export function SongDetailClient({ sheets, originalKey, currentUserId, songId, s
       )}
 
       {/* Sheet metadata */}
-      <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm text-muted-foreground mb-4">
+      <div className="flex flex-wrap gap-x-3 sm:gap-x-6 gap-y-1 text-sm text-muted-foreground mb-4">
         <span>
           <span className="font-medium text-foreground">Instrument :</span>{' '}
           {instrumentLabels[activeSheet.instrument]}
@@ -133,7 +133,7 @@ export function SongDetailClient({ sheets, originalKey, currentUserId, songId, s
       </div>
 
       {/* Chord sheet */}
-      <div className="bg-card rounded-xl p-6 overflow-x-auto">
+      <div className="bg-card rounded-xl p-4 sm:p-6 overflow-hidden break-words">
         <ChordRenderer content={transposedContent} />
       </div>
 
