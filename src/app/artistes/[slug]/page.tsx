@@ -86,6 +86,7 @@ export default async function ArtistDetailPage({ params }: Props) {
           {songs.map((song) => (
             <SongCard
               key={song.id}
+              songId={song.id}
               title={song.title}
               slug={song.slug}
               artistName={artist.name}

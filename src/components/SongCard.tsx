@@ -2,9 +2,11 @@ import Link from "next/link";
 import { Guitar } from "lucide-react";
 import { StyleBadge } from "./StyleBadge";
 import { Card, CardContent } from "@/components/ui/card";
+import { AddToPlaylistButton } from "@/components/AddToPlaylistButton";
 import type { Style } from "@/types/database";
 
 interface SongCardProps {
+  songId: string;
   title: string;
   slug: string;
   artistName: string;
@@ -12,11 +14,11 @@ interface SongCardProps {
   originalKey: string | null;
 }
 
-export function SongCard({ title, slug, artistName, style, originalKey }: SongCardProps) {
+export function SongCard({ songId, title, slug, artistName, style, originalKey }: SongCardProps) {
   return (
-    <Link href={`/chansons/${slug}`} className="block">
-      <Card className="hover:border-primary/30 hover:shadow-md transition-all duration-200 cursor-pointer">
-        <CardContent className="p-5">
+    <Card className="hover:border-primary/30 hover:shadow-md transition-all duration-200">
+      <CardContent className="p-5">
+        <Link href={`/chansons/${slug}`} className="block">
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
               <h3 className="font-heading text-lg truncate">{title}</h3>
@@ -27,9 +29,12 @@ export function SongCard({ title, slug, artistName, style, originalKey }: SongCa
               <Guitar className="w-4 h-4 text-muted-foreground" />
             </div>
           </div>
-          <div className="mt-3"><StyleBadge style={style} /></div>
-        </CardContent>
-      </Card>
-    </Link>
+        </Link>
+        <div className="mt-3 flex items-center justify-between">
+          <StyleBadge style={style} />
+          <AddToPlaylistButton songId={songId} songTitle={title} variant="icon" />
+        </div>
+      </CardContent>
+    </Card>
   );
 }

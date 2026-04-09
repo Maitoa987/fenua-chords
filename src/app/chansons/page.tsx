@@ -88,6 +88,7 @@ export default async function ChansonPage({ searchParams }: Props) {
             return (
               <SongCard
                 key={song.id}
+                songId={song.id}
                 title={song.title}
                 slug={song.slug}
                 artistName={artistName}

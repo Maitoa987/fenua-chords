@@ -126,7 +126,13 @@ export default async function SongDetailPage({ params }: Props) {
       </div>
 
       {/* Chord sheets with interactivity */}
-      <SongDetailClient sheets={typedSheets} originalKey={song.original_key} currentUserId={user?.id ?? null} />
+      <SongDetailClient
+        sheets={typedSheets}
+        originalKey={song.original_key}
+        currentUserId={user?.id ?? null}
+        songId={song.id}
+        songTitle={song.title}
+      />
 
       {/* YouTube link */}
       {song.youtube_url && (
