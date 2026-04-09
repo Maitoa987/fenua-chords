@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { User } from "@supabase/supabase-js";
 import { Button, buttonVariants } from "@/components/ui/button";
+import { ThemeToggle } from "./ThemeToggle";
 
 interface MobileMenuProps {
   onClose: () => void;
@@ -86,6 +87,10 @@ export function MobileMenu({ onClose, user, onLogout, isAdmin, username }: Mobil
           Connexion
         </Link>
       )}
+      <div className="flex items-center gap-2 pt-2 border-t border-border">
+        <ThemeToggle />
+        <span className="text-sm text-muted-foreground">Thème</span>
+      </div>
     </nav>
   );
 }

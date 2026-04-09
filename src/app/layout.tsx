@@ -7,6 +7,7 @@ import { Footer } from "@/components/Footer";
 import { cn } from "@/lib/utils";
 import { PlaylistProvider } from "@/lib/playlist-context";
 import { PlaylistMiniBar } from "@/components/PlaylistMiniBar";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -50,15 +51,18 @@ export default function RootLayout({
   return (
     <html
       lang="fr"
+      suppressHydrationWarning
       className={cn("h-full", "antialiased", varelaRound.variable, nunitoSans.variable, geistMono.variable, "font-sans", geist.variable)}
     >
       <body className="min-h-full flex flex-col">
-        <PlaylistProvider>
-          <Header />
-          <main className="flex-1">{children}</main>
-          <Footer />
-          <PlaylistMiniBar />
-        </PlaylistProvider>
+        <ThemeProvider>
+          <PlaylistProvider>
+            <Header />
+            <main className="flex-1">{children}</main>
+            <Footer />
+            <PlaylistMiniBar />
+          </PlaylistProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

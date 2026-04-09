@@ -137,12 +137,12 @@ export default async function SongDetailPage({ params }: Props) {
 
       {/* YouTube link */}
       {song.youtube_url && (
-        <div className="mt-8 pt-6 border-t border-gray-100">
+        <div className="mt-8 pt-6 border-t border-border">
           <a
             href={song.youtube_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-sm text-red-600 hover:text-red-700 transition-colors font-medium"
+            className="inline-flex items-center gap-2 text-sm text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 transition-colors font-medium"
           >
             <svg
               viewBox="0 0 24 24"

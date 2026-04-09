@@ -7,6 +7,7 @@ import Image from "next/image";
 import { Menu, X } from "lucide-react";
 import { MobileMenu } from "./MobileMenu";
 import { UserMenu } from "./UserMenu";
+import { ThemeToggle } from "./ThemeToggle";
 import { createClient } from "@/lib/supabase/client";
 import { Button, buttonVariants } from "@/components/ui/button";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
@@ -57,7 +58,7 @@ export function Header() {
     <header className="sticky top-0 z-30 bg-card/90 backdrop-blur border-b border-border">
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
         <Link href="/">
-          <Image src="/logo-text.png" alt="Fenua Chords" width={180} height={48} className="h-12 w-auto" />
+          <Image src="/logo-text.png" alt="Fenua Chords" width={180} height={48} className="h-12 w-auto dark:brightness-0 dark:invert" />
         </Link>
 
         <nav className="hidden md:flex items-center gap-6">
@@ -86,6 +87,7 @@ export function Header() {
               Connexion
             </Link>
           )}
+          <ThemeToggle />
         </nav>
 
         <Button
