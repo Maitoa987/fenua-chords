@@ -25,6 +25,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent } from '@/components/ui/card'
 import { StyleBadge } from '@/components/StyleBadge'
+import { PlaylistShareModal } from '@/components/PlaylistShareModal'
 import { createClient } from '@/lib/supabase/client'
 import { generateShareToken } from '@/lib/playlist'
 import { usePlaylist } from '@/lib/playlist-context'
@@ -315,6 +316,16 @@ export function PlaylistManagerClient({ playlist, songs: initialSongs, followedP
       <div className="mt-8 p-4 bg-muted/50 rounded-lg text-center text-sm text-muted-foreground">
         Envie de plus de playlists ? <span className="font-medium">Bientot disponible</span>
       </div>
+
+      {playlist && (
+        <PlaylistShareModal
+          open={shareOpen}
+          onOpenChange={setShareOpen}
+          playlistId={playlist.id}
+          shareToken={playlist.share_token}
+          visibility={playlist.visibility}
+        />
+      )}
     </div>
   )
 }
