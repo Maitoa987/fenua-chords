@@ -104,14 +104,17 @@ Toutes les chansons sont insérées en `draft`. La publication se fait manuellem
 
 | Fichier | Description |
 |---------|-------------|
-| `.claude/plugins/skills/import-songs.md` | Skill Claude Code |
+| `~/.claude/skills/import-songs/SKILL.md` | Skill Claude Code (global, disponible dans tous les projets) |
 | `scripts/import-to-supabase.ts` | Script d'import Supabase |
+
+## Dépendances
+
+- `tsx` à ajouter en devDependency : `npm install -D tsx`
 
 ## Fichiers non modifiés
 
 - Aucune modification de l'app Next.js
 - Aucune modification du schéma DB
-- Aucune nouvelle dépendance npm (seulement `tsx` déjà présent ou à ajouter)
 
 ---
 
