@@ -2,6 +2,7 @@ import { Suspense } from "react"
 import { createClient } from "@/lib/supabase/server"
 import { Badge } from "@/components/ui/badge"
 import { DeleteButton } from "./DeleteButton"
+import { PublishButton } from "./PublishButton"
 import { RevisionHistory } from "./RevisionHistory"
 import { SearchBar } from "@/components/SearchBar"
 import type { Style, Instrument } from "@/types/database"
@@ -143,7 +144,13 @@ export default async function AdminContenuPage({ searchParams }: Props) {
                       {new Date(song.created_at).toLocaleDateString("fr-FR")}
                     </p>
                   </div>
-                  <DeleteButton type="song" id={song.id} label={song.title} />
+                  <div className="flex items-center gap-2 shrink-0">
+                    <PublishButton
+                      id={song.id}
+                      currentStatus={song.status as "draft" | "published"}
+                    />
+                    <DeleteButton type="song" id={song.id} label={song.title} />
+                  </div>
                 </div>
 
                 {/* Chord sheets */}
