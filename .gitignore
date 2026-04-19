@@ -40,3 +40,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .superpowers/
+
+# import de chansons (fichiers locaux temporaires)
+titles.txt
+import-output.json
